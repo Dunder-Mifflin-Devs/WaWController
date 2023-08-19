@@ -1,0 +1,25 @@
+{
+  "name": "wawcontroller",
+  "version": "1.0.0",
+  "description": "Worth-a-Watch's Backend point of entry Service",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dunder-Mifflin-Devs/WaWController.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dunder-Mifflin-Devs/WaWController/issues"
+  },
+  "homepage": "https://github.com/Dunder-Mifflin-Devs/WaWController#readme",
+  "devDependencies": {
+    "jest": "^29.6.2"
+  }
+}
