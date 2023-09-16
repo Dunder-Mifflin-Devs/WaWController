@@ -8,8 +8,9 @@
   },
   "scripts": {
     "test": "npm run test -- --coverage ",
-    "start": "node cd src && node server.js",
-    "dev": "concurrently \"cd src && nodemon server.js\" \"cd src && node dev-mongo.js\""
+    "start": "cd src && node server.js",
+    "dev": "cd src && nodemon server.js ",
+    "devLocal": "concurrently \"cd src && nodemon server.js\" \"cd src && node dev-mongo.js\""
   },
   "repository": {
     "type": "git",
