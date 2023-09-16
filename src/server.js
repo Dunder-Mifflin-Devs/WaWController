@@ -14,8 +14,7 @@ const connectDB = require("./config/database");
 const mainRoutes = require('./routes/main')
 
 //Use .env file in config folder 
-require("dotenv").config({ path: "./config/.env" });
-console.log(process.env.PORT)
+console.log("connected to " + process.env.ENV + " environment")
 
 const PORT = process.env.PORT || 3000;
 

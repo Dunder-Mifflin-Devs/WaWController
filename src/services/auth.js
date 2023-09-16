@@ -11,7 +11,7 @@ exports.postSignup = async (req, res, next) => {
 
   if (validationErrors.length) {
     req.flash("errors", validationErrors);
-    return res.status(400).send(validationErrors.map(x => x.msg).join(', '));
+    return res.status(400).send({ msg: validationErrors.map(x => x.msg).join(', ') });
   }
   req.body.email = validator.normalizeEmail(req.body.email, {
     gmail_remove_dots: false,
@@ -24,7 +24,7 @@ exports.postSignup = async (req, res, next) => {
     passHash: req.body.password,
   });
 
-  let existingUser = await User.findOne({ $or: [{ email: req.body.email }, { userName: req.body.userName }] })
+  let existingUser = await User.findOne({ $or: [{ userEmail: req.body.email }, { userName: req.body.userName }] })
   if (existingUser) {
     req.flash("errors", {
       msg: "Account with that email address or username already exists.",
