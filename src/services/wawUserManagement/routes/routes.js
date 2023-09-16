@@ -1,8 +1,11 @@
 const express = require('express');
 const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2').Strategy;
+const dotenv = require('dotenv');
 
-require('dotenv').config({ path: '/../../config/.env' });
+dotenv.config({ path: '../../../../config/.env' });
+
+
 
 const router = express.Router();
 
@@ -10,10 +13,10 @@ const router = express.Router();
 passport.use( new OAuth2Strategy(
     {
       authorizationURL: 'https://accounts.google.com/o/oauth2/v2/auth',
-      tokenURL:'https://oauth2.googleapis.com/token',
-      clientID: '259520590873-88gpvkki15tgs1oadm118hnkmq3ojlr8.apps.googleusercontent.com',
+      tokenURL: 'https://oauth2.googleapis.com/token',
+      clientID:'259520590873-88gpvkki15tgs1oadm118hnkmq3ojlr8.apps.googleusercontent.com',
       clientSecret: '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',
-      callbackURL: 'http://localhost:5173/auth/google/callback',
+      callbackURL: 'http://localhost:3001/auth/google/callback'
     },
     (accessToken, refreshToken, profile, done) => {
       // Here, you can perform actions after a successful authentication,
