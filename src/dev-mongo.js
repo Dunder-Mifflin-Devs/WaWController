@@ -27,20 +27,9 @@ module.exports.run = async () => {
 }
 
 
-// module.exports.connect = async() => {
-//   const mongoServer = await MongoMemoryServer.create()
-//   const uri = mongoServer.getUri()
-//   const mongooseOpts = {
-//       useNewUrlParser: true,
-//       useUnifiedTopology: true,
-//   }
-//   await mongoose.connect(uri, mongooseOpts)
-// }
-
 module.exports.closeDatabase = async() => {
   await mongoose.connection.dropDatabase()
   await mongoose.connection.close()
-  // await mongod.stop()
 }
 
 module.exports.clearDatabase = async() => {
