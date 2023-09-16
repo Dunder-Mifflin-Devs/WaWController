@@ -2,14 +2,10 @@ require("dotenv").config({ path: "./config/.env" });
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const fs = require('fs');
 const path = require('path');
+const mongoose = require('mongoose')
 
 // This file runs a MongoDB server locally for development
-async function run() {
-  const dbString = process.env.DB_STRING || ''
-  if (!dbString.includes('localhost') && !dbString.includes('127.0.0.1')) {
-    console.log('DB_STRING is not localhost, not running local mongo')
-    return
-  }
+module.exports.run = async () => {
   const dbPath = path.join(__dirname, '..', '.mongo');
 
   if (!fs.existsSync(dbPath)) {
@@ -30,4 +26,27 @@ async function run() {
   console.log(`Mongo server started on: ${uri}`);
 }
 
-run()
+
+// module.exports.connect = async() => {
+//   const mongoServer = await MongoMemoryServer.create()
+//   const uri = mongoServer.getUri()
+//   const mongooseOpts = {
+//       useNewUrlParser: true,
+//       useUnifiedTopology: true,
+//   }
+//   await mongoose.connect(uri, mongooseOpts)
+// }
+
+module.exports.closeDatabase = async() => {
+  await mongoose.connection.dropDatabase()
+  await mongoose.connection.close()
+  // await mongod.stop()
+}
+
+module.exports.clearDatabase = async() => {
+  const collections = mongoose.connection.collections
+  for (const key in collections) {
+      const collection = collection[key]
+      await collection.deleteMany()
+  }
+}

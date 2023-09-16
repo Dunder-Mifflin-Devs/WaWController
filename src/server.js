@@ -8,14 +8,16 @@ const MongoStore = require("connect-mongo");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
+const path = require("path")
+
 const connectDB = require("./config/database");
 const mainRoutes = require('./routes/main')
 
-const PORT = process.env.PORT || 3000;
-
-
-//Use .env file in config folder
+//Use .env file in config folder 
 require("dotenv").config({ path: "./config/.env" });
+console.log(process.env.PORT)
+
+const PORT = process.env.PORT || 3000;
 
 // Passport config
 require("./config/passport")(passport);
@@ -57,6 +59,16 @@ const corsOptions = {
 }
 app.use(cors(corsOptions))
 
+// sets up local mongo server if necessary
+// can't seem to figure out how to set cross-env to work with dotenv. Should work with npm run devLocal, but it stops accessing the .env file
+const dbString = process.env.DB_STRING || ''
+if (dbString.includes('localhost') || dbString.includes('127.0.0.1')) {
+  const { run } = require("./dev-mongo");
+  (async function() {
+    await run()
+  })()
+}
+
 // Check if in a local environment
 const isMockEnvironment = yn(process.env.ENVIRONMENT === 'local');
 
@@ -78,3 +90,4 @@ connectDB().then(() => {
     );
   });
 });
+module.exports = app

@@ -29,9 +29,9 @@ exports.postSignup = async (req, res, next) => {
     req.flash("errors", {
       msg: "Account with that email address or username already exists.",
     });
-    return res.status(409).send("Account already exists");
+    return res.status(409).send({ msg: "Account already exists" });
   }
 
   await user.save()
-  return res.status(201).send("Account created")  
+  return res.status(201).send({ msg: "Account created" })  
 };
