@@ -68,18 +68,6 @@ if (dbString.includes('localhost') || dbString.includes('127.0.0.1')) {
   })()
 }
 
-// Check if in a local environment
-const isMockEnvironment = yn(process.env.ENVIRONMENT === 'local');
-
-let dbUrl;
-if (isMockEnvironment) {
-    // If in mock env, use mock DB
-    dbUrl = process.env.MOCK_DB_URL;
-} else {
-    // Else use live DB
-    dbUrl = process.env.LIVE_DB_URL;
-}
-
 //Connect To Database
 connectDB().then(() => {
   //Server Running
