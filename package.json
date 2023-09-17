@@ -1,0 +1,50 @@
+{
+  "name": "wawusermanagementservice",
+  "version": "1.0.0",
+  "description": "Worth-a-Watch's User Management Service provides the API for login processes and also provides the API for more profile-related elements",
+  "main": "src/server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js",
+    "test-coverage": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js --coverage",
+    "start": "env-cmd -f ./src/config/.env.prod node ./src/server.js",
+    "dev": "env-cmd -f ./src/config/.env.dev nodemon ./src/server.js",
+    "devLocal": "env-cmd -f ./src/config/.env.devLocal nodemon ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dunder-Mifflin-Devs/WaWuserManagementService.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dunder-Mifflin-Devs/WaWuserManagementService/issues"
+  },
+  "homepage": "https://github.com/Dunder-Mifflin-Devs/WaWuserManagementService#readme",
+  "devDependencies": {
+    "@shelf/jest-mongodb": "^4.1.7",
+    "concurrently": "^8.2.1",
+    "jest": "^29.6.3",
+    "mongodb-memory-server": "^8.15.1",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  },
+  "dependencies": {
+    "connect-mongo": "^5.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "env-cmd": "^10.1.0",
+    "express": "^4.18.2",
+    "express-flash": "^0.0.2",
+    "method-override": "^3.0.0",
+    "mongoose": "^7.4.4",
+    "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0",
+    "session": "^0.1.0",
+    "validator": "^13.11.0",
+    "yn": "^4.0.0"
+  }
+}
