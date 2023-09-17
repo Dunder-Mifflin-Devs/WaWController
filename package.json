@@ -1,21 +1,19 @@
 {
-  "name": "wawusermanagementservice",
+  "name": "wawcontroller",
   "version": "1.0.0",
-  "description": "Worth-a-Watch's User Management Service provides the API for login processes and also provides the API for more profile-related elements",
-  "main": "src/server.js",
-  "directories": {
-    "test": "test"
-  },
+  "description": "Worth-a-Watch's controller service",
+  "main": "server.js",
   "scripts": {
     "test": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js",
     "test-coverage": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js --coverage",
     "start": "env-cmd -f ./src/config/.env.prod node ./src/server.js",
-    "dev": "env-cmd -f ./src/config/.env.dev nodemon ./src/server.js",
-    "devLocal": "env-cmd -f ./src/config/.env.devLocal nodemon ./src/server.js"
+    "dev": "cross-env NODE_ENV=development node server.js",
+    "devLocal": "env-cmd -f ./src/config/.env.devLocal nodemon ./src/server.js",
+    "prod": "cross-env NODE_ENV=production node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Dunder-Mifflin-Devs/WaWuserManagementService.git"
+    "url": "git+https://github.com/Dunder-Mifflin-Devs/WaWController.git"
   },
   "author": "",
   "license": "ISC",
@@ -35,6 +33,7 @@
     "connect-mongo": "^5.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
+    "cross-env": "^7.0.3",
     "env-cmd": "^10.1.0",
     "express": "^4.18.2",
     "express-flash": "^0.0.2",
@@ -45,6 +44,5 @@
     "passport-local": "^1.0.0",
     "session": "^0.1.0",
     "validator": "^13.11.0",
-    "yn": "^4.0.0"
   }
 }
