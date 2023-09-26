@@ -1,1 +1,2 @@
-Contains data models that represent the structure of show data. where the schemas go.
+This folder will contain models that persist throughout all apps. 
+User authorization for one, error handling, and anything else that will be shared or is needed to filter systematically for the microservices.

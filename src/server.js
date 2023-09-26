@@ -1,3 +1,5 @@
+const props = require('./config/props');
+require('dotenv').config({ path: './config/.env' });
 const express = require("express");
 const app = express();
 const yn = require('yn');
