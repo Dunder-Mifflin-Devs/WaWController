@@ -1,1 +1,0 @@
-//review Ratings service logic
