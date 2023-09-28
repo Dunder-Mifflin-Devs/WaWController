@@ -1,10 +1,13 @@
 const express = require('express');
+const router = express.Router();
 const passport = require('passport');
 const OAuth2Strategy = require('passport-oauth2').Strategy;
 
+// Controllers
+const userController = require('../userControllers/userController');
+
 require('dotenv').config({ path: '/../../config/.env' });
 
-const router = express.Router();
 
 // Define the OAuth 2.0 strategy
 passport.use( new OAuth2Strategy(
@@ -40,13 +43,16 @@ router.get(
 );
 
 // Protected route example
-router.get('/profile', (req, res) => {
+router.get('/profile', (req, res, next) => {
   // Check if the user is authenticated
   if (req.isAuthenticated()) {
-    res.send('Welcome to the Profile Page');
+    return next();
   } else {
     res.redirect('/');
   }
 });
+
+// GET user profile
+router.get('/profile', isAuthenticated, userController.getUserProfile);
 
 module.exports = router;
