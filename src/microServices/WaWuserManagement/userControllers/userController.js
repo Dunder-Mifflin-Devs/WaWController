@@ -1,7 +1,6 @@
 /* Assuming we need to point to the routes from here */
 
-const express = require('express');
-const User = require('../UserModels/User');
+const User = require('../../../models/User');
 const mongoose = require('mongoose');
 
 // @desc    Get user profile

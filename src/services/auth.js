@@ -3,7 +3,7 @@ const validator = require("validator");
 const User = require("../models/User");
 const mongoose = require("mongoose")
 
-exports.postSignup = async (req, res, next) => {
+const postSignup = async (req, res, next) => {
   console.log(req.body)
   const validationErrors = [];
   if (!validator.isEmail(req.body.email))
@@ -34,4 +34,8 @@ exports.postSignup = async (req, res, next) => {
 
   await user.save()
   return res.status(201).send({ msg: "Account created" })  
+};
+
+module.exports = {
+  postSignup,
 };
