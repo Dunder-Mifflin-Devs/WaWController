@@ -4,4 +4,4 @@ module.exports = {
         res.clearCookie('oauth_token');
         res.redirect('/');
     }
-}
+};
