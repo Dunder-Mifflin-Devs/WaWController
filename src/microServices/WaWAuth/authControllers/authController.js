@@ -1,1 +1,7 @@
-//auth code go hurrr
+
+module.exports = {
+    auth : () => {
+        //auth logic goes here
+    }
+}
+
