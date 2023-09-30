@@ -1,3 +1,4 @@
+
 const express = require('express');
 const passport = require("passport");
 const validator = require("validator");
@@ -86,3 +87,8 @@ module.exports = {
 
     //PUT logic
 }
+
+/* Assuming we need to point to the routes from here */
+
+const express = require('express');
+
