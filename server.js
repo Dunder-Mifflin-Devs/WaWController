@@ -10,7 +10,9 @@ require('dotenv').config({ path: './config/.env' });
 
 
 /* TODO Passport authentication logic goes here*/
-
+ensureAuth(req,res, (req, res) => {
+    //list out the secured routes here 
+})
 /* TODO secure routes go here*/
 
 app.listen(port, () => {
