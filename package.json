@@ -4,8 +4,8 @@
   "description": "Worth-a-Watch's controller service",
   "main": "server.js",
   "scripts": {
-    "test": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js",
-    "test-coverage": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js --coverage",
+    "test": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand --config=./test/jest.config.js",
+    "test-coverage": "env-cmd -f ./src/config/.env.test jest --testEnvironment=node --runInBand --config=./test/jest.config.js --coverage",
     "start": "env-cmd -f ./src/config/.env.prod node ./src/server.js",
     "dev": "cross-env NODE_ENV=development node server.js",
     "devLocal": "env-cmd -f ./src/config/.env.devLocal nodemon ./src/server.js",
@@ -43,6 +43,9 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "session": "^0.1.0",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "express-session": "^1.17.2",
+    "express-validator": "^7.0.0"
+
   }
 }
