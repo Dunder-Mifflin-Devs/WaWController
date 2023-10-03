@@ -5,7 +5,7 @@ const props = require('./config/props');
 const mongoose = require("mongoose");
 const passport = require("passport");
 const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
+// const MongoStore = require("connect-mongo")(session);
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
@@ -15,8 +15,6 @@ require('dotenv').config({ path: './config/.env' });
 // Passport config
 require("./config/passport")(passport);
 
-//Connect To Database
-connectDB();
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -37,6 +35,9 @@ app.use(
     store: new MongoStore({ mongooseConnection: mongoose.connection }),
   })
 );
+
+//Connect To Database
+connectDB();
 
 // Passport middleware
 app.use(passport.initialize());
