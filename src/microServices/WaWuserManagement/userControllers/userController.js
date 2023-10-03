@@ -1,9 +1,29 @@
+/* Assuming we need to point to the routes from here */
 
 const express = require('express');
 const passport = require("passport");
 const validator = require("validator");
 const User = require("../userModels/User");
 const mongoose = require("mongoose")
+
+const validateUser = [
+  isAuthenticated,
+  body('username').notEmpty().withMessage('Username is required'),
+  body('email').isEmail().withMessage('Valid email is required'),
+];
+
+const conn = await mongoose.connect(props.dbUrl || "mongodb://127.0.0.1:27017/", { //necessary for tests
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
+
+const handleValidationErrors = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      return res.status(400).json({ message: 'Validation Error', errors: errors.array() });
+  }
+  next(); // Proceed to the next middleware or route handler
+}
 
 module.exports = {
 //POST logic
@@ -83,12 +103,57 @@ module.exports = {
           res.redirect('/');
         }
       },
+
+      postProfile: (req, res) => {
+        validateUser, handleValidationErrors, (req, res) => {
+        const { username, email } = req.body;
+
+  // Create a new user document using the User model
+        const newUser = new User({
+         _id: new mongoose.Types.ObjectId(),
+          username,
+          email,
+      // Other user profile data
+        });
+        newUser.save((err) => {
+          if (err) {
+              return res.status(500).json({ message: 'Error creating user profile', error: err.message });
+          }
+          res.sendStatus(201).json({
+              message: 'Profile created successfully',
+              user: {
+                  id: newUser._id,
+                  username: newUser.username,
+                  email: newUser.email,
+                  // Other user profile data
+              },
+          });
+        });
+      }
+    },
+
+
     //DELETE logic
 
     //PUT logic
+    putProfile: (req, res) => { validateUser, handleValidationErrors, (req, res) => {
+      const { username, email } = req.body;
+  
+      // Update the user data in the database
+      User.findByIdAndUpdate(
+          req.user._id,
+          { username, email },
+          { new: true },
+          (err, updatedUser) => {
+              if (err) {
+                  return res.status(500).json({ message: 'Error updating user data', error: err.message });
+              }
+  
+              res.json({
+                  message: 'Profile settings updated successfully',
+                  user: updatedUser,
+              });
+          }
+      );
+  }}
 }
-
-/* Assuming we need to point to the routes from here */
-
-const express = require('express');
-
