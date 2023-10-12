@@ -7,7 +7,7 @@
     "test": "env-cmd -f ./config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js",
     "test-coverage": "env-cmd -f ./config/.env.test jest --testEnvironment=node --runInBand ./test --config=./test/jest.config.js --coverage",
     "start": "env-cmd -f ./config/.env.prod node ./server.js",
-    "dev": "cross-env NODE_ENV=development node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./server.js",
     "devLocal": "env-cmd -f ./config/.env.devLocal nodemon ./server.js",
     "prod": "cross-env NODE_ENV=production node ./server.js"
   },

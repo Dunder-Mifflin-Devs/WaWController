@@ -2,19 +2,28 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const props = require('./config/props');
+
 const mongoose = require("mongoose");
 const passport = require("passport");
+console.log("anything please")
 const session = require("express-session");
-const MongoStore = require("connect-mongo")(session);
+const MongoStore = require("connect-mongo");
+
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
 const connectDB = require("./config/database");
-require('dotenv').config({ path: './config/.env' });
+require('dotenv').config({ path: "./config/.env" });
+
+const PORT = process.env.PORT || 3000;
 
 // Passport config
 require("./config/passport")(passport);
 
+console.log("got to line 20")
+
+//Connect To Database
+connectDB();
 
 //Body Parsing
 app.use(express.urlencoded({ extended: true }));
@@ -23,21 +32,25 @@ app.use(express.json());
 //Logging
 app.use(logger("dev"));
 
+console.log("got to line 29")
+
 //Use forms for put / delete
 app.use(methodOverride("_method"));
+
+console.log("got to line 34")
 
 // Setup Sessions - stored in MongoDB
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: new MongoStore({ mongooseConnection: mongoose.connection }),
+    store: MongoStore.create({ client: mongoose.connection.getClient()}),
   })
 );
 
-//Connect To Database
-connectDB();
+
+
 
 // Passport middleware
 app.use(passport.initialize());
