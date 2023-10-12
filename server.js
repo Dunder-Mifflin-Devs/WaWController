@@ -58,27 +58,6 @@ app.use(passport.session());
 //Use flash messages for errors, info, etc...
 app.use(flash());
 
-/* TODO Passport authentication logic goes here*/
-//const OAuth2Strategy = require('passport-oauth2');
-
-passport.use(
-  new OAuth2Strategy(
-    {
-      authorizationURL: process.env.AUTHORIZATION_URL,
-      tokenURL: process.env.TOKEN_URL,
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL,
-      scope: ["profile", "email"],
-    },
-    function (accessToken, refreshToken, profile, cb) {
-      //From AI
-      // Typically, you'd find or create a user in your database here
-      // For this example, just pass the profile data forward
-      return cb(null, profile);
-    }
-  )
-);
 
 /* TODO wide open routes go here*/
 
@@ -106,29 +85,7 @@ app.get('/google/callback',
 
     }
 );
-/* 
-app.get("/auth/oauth2", passport.authenticate("oauth2"));
 
-app.get(
-  "/auth/oauth2/callback",
-  passport.authenticate("oauth2", { failureRedirect: "/" }),
-  function (req, res) {
-    // Successful authentication, redirect home.
-    res.redirect("/");
-  }
-);
- */
-/* TODO Ensure Auth */
-/* function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  res.redirect('/auth');
-}
-
-app.get('/protected', ensureAuthenticated, (req, res) => {
-  res.send('Protected content!');
-}); */
-
-/* TODO passport oauth routh authentication */
 
 // And... start it up!
 app.listen(port, () => {
