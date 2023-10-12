@@ -1,4 +1,4 @@
-require("dotenv").config({ path: "./config/.env" });
+require("dotenv").config({ path: "./../../config/.env" });
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const fs = require('fs');
 const path = require('path');
