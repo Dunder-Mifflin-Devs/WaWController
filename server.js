@@ -60,7 +60,8 @@ app.use(flash());
 
 
 /* TODO wide open routes go here*/
-
+const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index");
+app.use("/usermgmt", userMgmtRoutes);
 /* TODO secure routes go here*/
 app.get("/loginOauth", passport.authenticate("oauth2", {
   session: true,

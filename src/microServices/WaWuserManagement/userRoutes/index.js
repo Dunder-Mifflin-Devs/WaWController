@@ -1,15 +1,33 @@
 const express = require('express');
-const passport = require('passport');
-const OAuth2Strategy = require('passport-oauth2').Strategy;
 
 const router = express.Router();
+
 require('dotenv').config({ path: '/../../config/.env' });
 const controller = require('../userControllers/userController')
 
 // POST routes
-router.post('/signUp', controller.postSignup())
-router.post('/signup/Oauth', controller.oAuthPost())
 
+// Import the OAuth Passport module
+const passportOAuth = require('../../../../config/passport-oauth2'); // Use the correct relative path
+
+// Import the Local Passport module
+const passportLocal = require('../../../../config/passport-local'); // Use the correct relative path
+
+// Protect OAuth authentication routes using the OAuth Passport module
+router.get('/oauth-login', passportOAuth.authenticate('oauth-strategy'), (req, res) => {
+  // OAuth login route logic, protected by Passport OAuth strategy
+});
+
+// Protect Local authentication routes using the Local Passport module
+router.post('/local-login', passportLocal.authenticate('local-strategy', { session: false }), (req, res) => {
+  // Local login route logic, protected by Passport Local strategy
+});
+
+
+
+
+router.post('/signup/Oauth', controller.oAuthPost())
+router.post('/signup/email', controller.postSignup())
 
 // GET routes 
 router.get('/auth', controller.oAuthGet());
@@ -28,12 +46,10 @@ router.get('/auth/google/callback', oAuthCallback());
 
 // Protected route example
 router.get('/profile', getProfile(req, res)); 
-
+/* 
 // =======
 const mongoose = require('mongoose');
 require('dotenv').config({ path: '/../../config/.env' });
-
-const router = express.Router();
 
 const UserSchema = require('../UserModels/User');
 
@@ -129,7 +145,7 @@ router.put('/', isAuthenticated, (req, res) => {
       });
     }
   );
-});
+}); */
 
 
 module.exports = router;
