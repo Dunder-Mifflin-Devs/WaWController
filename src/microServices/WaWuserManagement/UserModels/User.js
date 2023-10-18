@@ -13,18 +13,20 @@ const UserSchema = new mongoose.Schema({
     type: String, 
     required: false
   }, // url to profile pic
-  altAuth: {
+/*   altAuth: {
     type: JSON, 
     required: false
-  },
+  }, */
   userEmail: {
     type: String, 
     required: false
   }, // if using oAuth, this field will be populated via different means, so when user signs up wit oAuth, this will not be filled til after completed.
   userName: {
     type: String, 
-    required: true
-  }
+    required: false // can we make true with oauth?
+  },
+  googleId: String,        // Unique identifier for Google OAuth2 users
+  googleDisplayName: String, // Display name for Google users
 });
 
-module.exports = mongoose.model('User', UserSchema, 'user-logins'); // (ModelName, SchemaName, MongoDB collection name)
+module.exports = mongoose.model('User', UserSchema, 'users'); // (ModelName, SchemaName, MongoDB collection name)

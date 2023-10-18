@@ -1,8 +1,8 @@
-// require("dotenv").config({ path: "./config/.env" });
-// const { MongoMemoryServer } = require('mongodb-memory-server');
-// const fs = require('fs');
-// const path = require('path');
-// const mongoose = require('mongoose')
+require("dotenv").config({ path: "./../../config/.env" });
+const { MongoMemoryServer } = require('mongodb-memory-server');
+const fs = require('fs');
+const path = require('path');
+const mongoose = require('mongoose')
 
 // // This file runs a MongoDB server locally for development
 // module.exports.run = async () => {
