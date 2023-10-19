@@ -11,9 +11,14 @@ const flash = require("express-flash");
 const logger = require("morgan");
 const connectDB = require("./config/database");
 require("dotenv").config({ path: "./config/.env" });
-// Passport config
-const LocalStrategy = require("passport-local").Strategy;
-const OAuth2Strategy = require("passport-oauth2");
+
+//Create Database
+if (process.env.MAKE_MOCK_DB) {
+  const memoryDB = require("./dev-mongo");
+  memoryDB.run(Number(process.env.MOCK_DB_PORT));
+
+  //process.on("SIGTERM", () => {});
+}
 
 //Connect To Database
 connectDB();
@@ -55,12 +60,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Passport config
+require("./config/passport-local")(passport, 'local');
+process.env.AUTHORIZATION_URL && require('./config/passport-oauth2')(passport, 'oauth2');
+
 //Use flash messages for errors, info, etc...
 app.use(flash());
 
 
 /* TODO wide open routes go here*/
-const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index");
+const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
 app.use("/usermgmt", userMgmtRoutes);
 /* TODO secure routes go here*/
 app.get("/loginOauth", passport.authenticate("oauth2", {

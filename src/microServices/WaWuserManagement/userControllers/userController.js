@@ -26,10 +26,28 @@ const mongoose = require("mongoose")
 // }
 
 module.exports = {
-//POST logic
-postSignup : async (req, res) => {
-  //put logic here
-}
+  //POST logic
+  postSignup : async (req, res) => {
+    //put logic here
+  },
+  oAuthPost: async (req, res) => {
+    //put logic here
+  },
+  oAuthGet: async (req, res) => {
+    //put logic here
+  },
+  oAuthCallback: async (req, res) => {
+    //put logic here
+  },
+  getProfile: async (req, res) => {
+    //put logic here
+  },
+  postProfile: async (req, res) => {
+    //put logic here
+  },
+  putProfile: async (req, res) => {
+    //put logic here
+  }
   //   postSignup : async (req, res, next) => {
   //       console.log(req.body)
   //       const validationErrors = [];

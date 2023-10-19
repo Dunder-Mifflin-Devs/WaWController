@@ -1,10 +1,11 @@
 const mongoose = require("mongoose");
 require("dotenv").config({ path: "./config/.env" })
-const GoogleStrategy = require('passport-oauth20').Strategy
+const GoogleStrategy = require('passport-oauth2').Strategy
 const User = require("../src/microServices/WaWuserManagement/userModels/User");
 
-module.exports = function(passport) {
-    passport.use(new GoogleStrategy({
+module.exports = function(passport, label) {
+    passport.use(label,
+    new GoogleStrategy({
         authorizationURL: process.env.AUTHORIZATION_URL,
         tokenURL: process.env.TOKEN_URL,
         clientID: process.env.GOOGLE_CLIENT_ID,

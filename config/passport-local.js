@@ -2,8 +2,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
 const User = require("../src/microServices/WaWuserManagement/userModels/User");
 
-module.exports = function (passport) {
-  passport.use(
+module.exports = function (passport, label) {
+  passport.use(label,
     new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
       User.findOne({ email: email.toLowerCase() }, (err, user) => {
         if (err) {
