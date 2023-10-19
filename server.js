@@ -13,11 +13,8 @@ const connectDB = require("./config/database");
 require("dotenv").config({ path: "./config/.env" });
 
 //Create Database
-if (process.env.MAKE_MOCK_DB) {
-  const memoryDB = require("./dev-mongo");
-  memoryDB.run(Number(process.env.MOCK_DB_PORT));
-
-  //process.on("SIGTERM", () => {});
+if (props.dbUrl.includes('localhost') || props.dbUrl.includes('127.0.0.1')) {
+  require("./dev-mongo").run();
 }
 
 //Connect To Database
@@ -98,7 +95,7 @@ app.get('/google/callback',
 
 
 // And... start it up!
-app.listen(port, () => {
+module.exports = app.listen(port, () => {
   console.log(`Running in a ${props.env} environment`);
   console.log(`Server is running in port ${port}.`);
 });

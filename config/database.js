@@ -1,23 +1,11 @@
 const mongoose = require("mongoose");
+const props = require("./props");
 require('dotenv').config();
 
 // This file connects your server to MongoDB
 const connectDB = async () => {
   try {
-    let dbUrl;
-
-    switch (process.env.ENV) {
-      case "prod":
-        dbUrl = process.env.LIVE_DB_URL;
-        break;
-      case "devLocal":
-        dbUrl = process.env.MOCK_DB_URL;
-        break;
-      default:
-        dbUrl = "mongodb://127.0.0.1:27017/";
-    }
-
-    const conn = await mongoose.connect(dbUrl, { //necessary for tests
+    const conn = await mongoose.connect(props.dbUrl, { //necessary for tests
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

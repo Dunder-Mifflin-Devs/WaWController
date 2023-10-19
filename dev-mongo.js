@@ -23,7 +23,6 @@ module.exports.run = async (port=27017) => {
   });
 
   const uri = mongod.getUri();
-  console.log(typeof port)
   console.log(`Mongo server started on: ${uri}`);
 }
 
