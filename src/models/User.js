@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// TODO: how bout bcrypt for password hashing?? See BUB
 
 const User = new mongoose.Schema({
     _id: {
