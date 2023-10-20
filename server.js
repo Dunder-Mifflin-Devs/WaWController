@@ -24,12 +24,6 @@ connectDB();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-//Logging
-// app.use(logger("dev"));
-
-//Use forms for put / delete
-// app.use(methodOverride("_method"));
-
 // Setup Sessions - stored in MongoDB
 
 const mongoClientPromise = new Promise((resolve) => {

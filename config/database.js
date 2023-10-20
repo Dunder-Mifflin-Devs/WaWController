@@ -5,6 +5,7 @@ require('dotenv').config();
 // This file connects your server to MongoDB
 const connectDB = async () => {
   try {
+    console.log(props.dbUrl)
     const conn = await mongoose.connect(props.dbUrl, { //necessary for tests
       useNewUrlParser: true,
       useUnifiedTopology: true,
