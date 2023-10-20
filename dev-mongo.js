@@ -1,11 +1,11 @@
-require("dotenv").config({ path: "./config/.env" });
+require("dotenv").config({ path: "./../../config/.env" });
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose')
 
 // This file runs a MongoDB server locally for development
-module.exports.run = async () => {
+module.exports.run = async (port=27017) => {
   const dbPath = path.join(__dirname, '..', '.mongo');
 
   if (!fs.existsSync(dbPath)) {
@@ -15,7 +15,7 @@ module.exports.run = async () => {
   // start mongo
   const mongod = await MongoMemoryServer.create({
     instance: {
-      port: 27017,
+      port,
       dbPath,
       // to persist data between runs (https://github.com/nodkz/mongodb-memory-server/issues/524)
       storageEngine: 'wiredTiger',
