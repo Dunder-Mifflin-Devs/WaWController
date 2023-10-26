@@ -6,7 +6,7 @@ const { MongoClient } = require('mongodb');
 const mongoose = require("mongoose")
 
 const url = 'mongodb://localhost:27017';
-const dbName = 'yourDatabaseName';
+const dbName = 'WaW-db';
 const client = new MongoClient(url);
 
 //Reuseable function for validating request data
