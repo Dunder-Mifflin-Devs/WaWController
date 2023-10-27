@@ -1,3 +1,5 @@
-// This will have logic for searching
+const express = require('express');
+const mongoose = require("mongoose");
 
-let search;
+module.exports = {
+}
