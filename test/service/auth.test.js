@@ -1,8 +1,8 @@
-const User = require('../../src/models/User')
+const User = require('../../src/microServices/WaWuserManagement/UserModels/User');
 const request = require("supertest")
 
-const db = require("../../src/dev-mongo")
-const app = require("../../src/server")
+const db = require("../../dev-mongo")
+const app = require("../../server")
 
 const user1Body = {
     "userName": "Adam",
@@ -25,7 +25,7 @@ const user4Body = {
     "password": "exampleHash"
 }
 
-beforeAll(async () => await db.run())
+//beforeAll(async () => await db.run())
 afterEach(async () => await db.clearDatabase())
 afterAll(async () => await db.closeDatabase())
 

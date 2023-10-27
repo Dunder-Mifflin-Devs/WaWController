@@ -1,2 +1,0 @@
-Defines the routes for the show-related endpoints.
-files in here would:  Configure the routes and maps them to controller functions.
