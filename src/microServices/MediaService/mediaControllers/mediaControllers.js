@@ -1,6 +1,5 @@
 const { getRandomWord } = require("../utils/randomWords");
-const props = require("../../../../config/props.js");
-
+const fetchResults = require('../utils/fetchResults')
 /* This will be where you put your controller for media
 You will probably want to organize these based on what the method is doing (POST, PUT, DELETE, GET)*/
 module.exports = {
@@ -11,27 +10,25 @@ module.exports = {
          page: 1
     */
     searchOMDB: async (req, res) => {
-        let results = [];
-        let search = req.query.search || "";
-        let type = (req.query.type || "").toLowerCase();
-        let page = req.query.page || 1;
-        if (type !== "movie" && type !== "series") type = "";
-
+        const data = {
+            search: req.query.search || "",
+            type: (req.query.type || "").toLowerCase(),
+            page: req.query.page || 1
+        }
         try {
-            results = await (await fetch(`${props.omdb}&i=${search}&type=${type}&plot=full`)).json();
-            if (results.Response === "True") {
-                delete results.Response;
-                return res.json({ success: true, results: [results], totalResults: 1});
-            }
-
-            results = await (await fetch(`${props.omdb}&s=${search}&type=${type}&page=${page}`)).json();
-            if (results.Response !== "True") throw "Unable to receive a response from OMDB";
-
-            return res.json({ success: true, results: results.Search, totalResults: Number(results.totalResults) });
+            const results = await fetchResults(data);
+            console.log(results)
+            console.log(req)
+            console.log(res)
+            const successResponse = { success: true, results: results.Search, totalResults: Number(results.totalResults) }
+            res.json(successResponse);
+            return successResponse;
         }
         catch(err) {
             console.error(err);
-            return res.json({ success: false, message: "Failed to search OMDB" });
+            const failureResponse = { success: false, message: "Failed to search OMDB" }
+            res.json(failureReponse);
+            return failureResponse
         }
     },
 
