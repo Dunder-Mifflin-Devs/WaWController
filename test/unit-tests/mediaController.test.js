@@ -28,6 +28,15 @@ describe("Media Controller Tests", () => {
             .toBe(JSON.stringify(data.omdbTitleExpected));
     })
 
+    test("results of an api error in a title or index search are handled correctly", async () => {
+        omdbSearch.mockImplementation((params) => {
+            throw "Error Occurred"
+        });
+
+        expect(JSON.stringify(await searchOMDB(data.omdbTitleRequest)))
+            .toBe(JSON.stringify(data.omdbErrorExpected));
+    })
+
     test("results of an index search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => {
             if ("i" in params) return data.omdbIndexResponse;
@@ -68,6 +77,15 @@ describe("Media Controller Tests", () => {
 
     test("results of an error in a random search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
+
+        expect(JSON.stringify(await randomOMDB(data.omdbRandomErrorRequest)))
+            .toBe(JSON.stringify(data.omdbRandomErrorExpected));
+    })
+
+    test("results of an api error in random search are handled correctly", async () => {
+        omdbSearch.mockImplementation((params) => {
+            throw "Error Occurred"
+        });
 
         expect(JSON.stringify(await randomOMDB(data.omdbRandomErrorRequest)))
             .toBe(JSON.stringify(data.omdbRandomErrorExpected));
