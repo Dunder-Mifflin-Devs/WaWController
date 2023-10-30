@@ -1,2 +1,0 @@
-const mediaController = require('../../../../src/microServices/MediaService/mediaControllers/mediaControllers.js');
-
