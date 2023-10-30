@@ -45,5 +45,21 @@ describe('When calling createArrayOfRandomNumbers', () => {
         });
         //check for a false in the includesResponseInExpected array
         expect(includesResponseInExpected.includes(false)).toBeFalsy(); 
-    })
+    });
+})
+describe('when calling createRandomNumberBtwn0andparam', () => {
+    it('should return a number between 0 and the param', async () => {
+        const result = math.createRandomNumberBtwn0andparam(20);
+        expect(result >= 0 && result <= 20).toBeTruthy();
+    });
+    it('should not produce a number greater than the param', async () => {
+        let truth = false;
+        for (let i = 0; i < 1500; i++){
+            const number = math.createRandomNumberBtwn0andparam(2)
+            if( number >= 2 || number < 0){
+                truth = true
+            }
+        }
+        expect(truth).toBeFalsy();
+    });
 })

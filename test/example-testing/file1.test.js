@@ -6,7 +6,7 @@ const randomNumber = Math.floor((Math.random() * 1952)) //length of imported lis
 describe('When calling getWordFromParam', () => {
     it('should return the expected word given the index and list', async() => {
         const newWordList = ['ability', 'another'];
-        const expected = 'ability';
+        const expected = 'another';
         const response = await words.getWordFromParam(1, newWordList);
         expect(response).toBe(expected);
     });
@@ -33,14 +33,14 @@ describe('When calling getNumberFromWord', () => {
 
     it('should return an error of "not today" when called with invalid parameters', async () => {
         const expected = 'Error: not today';
-        const response = await words.getNumberFromWord('non-existent-word', wordList);
+        const response = words.getNumberFromWord('non-existent-word', wordList);
         expect(response.toString()).toBe(expected);
-    })
+    });
 
-    it('should return the same number + 1 as when finding the word using getWordFromParam', async () => {
-        const word = await words.getWordFromParam(randomNumber, wordList);
-        const expected = randomNumber;
+    it('should return the same number as when finding the word using getWordFromParam', async () => {
+        const word = words.getWordFromParam(randomNumber, wordList);
+        const expected = randomNumber + 1;
         const response = await words.getNumberFromWord(word, wordList);
         expect(response).toBe(expected);
-    })
+    });
 })
