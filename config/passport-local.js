@@ -1,6 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
 const mongoose = require("mongoose");
-const User = require("../src/microServices/WaWuserManagement/userModels/User");
+const User = require("../src/microServices/WaWuserManagement/UserModels/User");
 
 module.exports = function (passport, label) {
   passport.use(label,

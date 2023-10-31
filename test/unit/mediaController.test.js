@@ -1,20 +1,29 @@
 const data = require("./mediaController.data");
 const { searchOMDB, randomOMDB } = require("../../src/microServices/MediaService/mediaControllers/mediaControllers");
 const { omdbSearch } = require("../../src/microServices/MediaService/utils/fetchResults");
+const { getRandomWord } = require("../../src/microServices/MediaService/utils/randomWords");
 
+// sets up the functions to mock
 jest.mock("../../src/microServices/MediaService/utils/fetchResults", () => {
     return {
         omdbSearch: jest.fn()
     }
-})
+});
+jest.mock("../../src/microServices/MediaService/utils/randomWords", () => {
+    return {
+        wordList: ["matrix"],
+        getRandomWord: () => "matrix"
+    }
+});
 
+// test suite for media controller unit tests
 describe("Media Controller Tests", () => {
     beforeEach(() => {
         jest.spyOn(console, 'error')
         console.error.mockImplementation(() => null);
     });
       
-      afterEach(() => {
+    afterEach(() => {
         console.error.mockRestore()
     })
 
@@ -28,7 +37,7 @@ describe("Media Controller Tests", () => {
             .toBe(JSON.stringify(data.omdbTitleExpected));
     })
 
-    test("results of an api error in a title or index search are handled correctly", async () => {
+    test("results of an api error in a title or id search are handled correctly", async () => {
         omdbSearch.mockImplementation((params) => {
             throw "Error Occurred"
         });
@@ -37,14 +46,14 @@ describe("Media Controller Tests", () => {
             .toBe(JSON.stringify(data.omdbErrorExpected));
     })
 
-    test("results of an index search are formatted correctly", async () => {
+    test("results of an id search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => {
-            if ("i" in params) return data.omdbIndexResponse;
+            if ("i" in params) return data.omdbIdResponse;
             else return { Response: False };
         });
 
-        expect(JSON.stringify(await searchOMDB(data.omdbIndexRequest)))
-            .toBe(JSON.stringify(data.omdbIndexExpected));
+        expect(JSON.stringify(await searchOMDB(data.omdbIdRequest)))
+            .toBe(JSON.stringify(data.omdbIdExpected));
     })
 
     test("results of a failed search are formatted correctly", async () => {

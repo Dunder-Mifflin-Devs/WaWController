@@ -1,6 +1,6 @@
 const { wordList, getRandomWord } = require("../../src/microServices/MediaService/utils/randomWords");
 
-
+// test suite for media utils unit tests
 describe("Media Utils Tests", () => {
     beforeEach(() => {
         jest.spyOn(console, 'error')

@@ -21,7 +21,6 @@ module.exports = {
         try {
             results = await omdbSearch({
                 i: search,
-                type,
                 plot: "full"
             });
 

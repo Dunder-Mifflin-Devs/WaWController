@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 3001;
 const props = require("./config/props");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -9,12 +8,12 @@ const MongoStore = require("connect-mongo");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
-const connectDB = require("./config/database");
+const { connectDB, run } = require("./config/database");
 require("dotenv").config({ path: "./config/.env" });
 
 //Create Database
 if (props.dbUrl.includes('localhost') || props.dbUrl.includes('127.0.0.1')) {
-  require("./dev-mongo").run();
+  run(Number(process.env.MOCK_DB_PORT));
 }
 
 //Connect To Database
@@ -95,7 +94,7 @@ app.get('/google/callback',
 
 
 // And... start it up!
-module.exports = app.listen(port, () => {
+module.exports = app.listen(props.port, () => {
   console.log(`Running in a ${props.env} environment`);
-  console.log(`Server is running in port ${port}.`);
+  console.log(`Server is running in port ${props.port}.`);
 });

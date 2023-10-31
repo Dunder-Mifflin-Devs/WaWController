@@ -38,5 +38,9 @@ module.exports = {
     // Automatically restore mock state between every test
     restoreMocks: true,
     // Automatically clear mock calls and instances between every test
-    clearMocks: true
+    clearMocks: true,
+    // Starts the server before integration tests
+    globalSetup: "./test/setupServer.js",
+    // Stops the server after integration tests
+    globalTeardown: "./test/teardownServer.js",
 };

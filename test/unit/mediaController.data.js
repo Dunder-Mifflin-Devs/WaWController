@@ -1,3 +1,4 @@
+// The mocked data, expected data, and tested requests for mediaController.test.js
 let omdbTitleRequest = {
     query: {
         search: "matrix"
@@ -158,13 +159,13 @@ let omdbTitleExpected = {
     totalResults: 139
 };
 
-let omdbIndexRequest = {
+let omdbIdRequest = {
     query: {
         search: "tt0133093"
     }
 }
 
-let omdbIndexResponse = {
+let omdbIdResponse = {
     "Title":"The Matrix",
     "Year":"1999",
     "Rated":"R",
@@ -190,7 +191,7 @@ let omdbIndexResponse = {
     "Response":"True"
 };
 
-let omdbIndexExpected = {
+let omdbIdExpected = {
     success: true,
     results: [
         {
@@ -575,9 +576,9 @@ module.exports = {
     omdbTitleRequest,
     omdbTitleResponse,
     omdbTitleExpected,
-    omdbIndexRequest,
-    omdbIndexResponse,
-    omdbIndexExpected,
+    omdbIdRequest,
+    omdbIdResponse,
+    omdbIdExpected,
     omdbErrorRequest,
     omdbErrorResponse,
     omdbErrorExpected,

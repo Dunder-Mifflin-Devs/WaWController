@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require("passport");
 const validator = require("validator");
-const User = require("../userModels/User");
+const User = require("../UserModels/User");
 const mongoose = require("mongoose")
 
 module.exports = {
