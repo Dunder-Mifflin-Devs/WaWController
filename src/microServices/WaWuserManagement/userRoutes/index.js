@@ -1,7 +1,17 @@
 const express = require('express');
+const logger = require('../../../middleware/logger');
+
+const app = express();
 
 require('dotenv').config({ path: '/../../config/.env' });
 const controller = require('../userControllers/userController')
+
+// Custom middleware to log connection attempts using the logger
+app.use((req, res, next) => {
+  const remoteAddress = req.connection.remoteAddress;
+  logger.info(`Connection attempt from ${remoteAddress}`);
+  next();
+});
 
 module.exports = (passport) => {
   const router = express.Router();
@@ -22,12 +32,31 @@ module.exports = (passport) => {
   router.post('/signup/Oauth', controller.oAuthPost)
   router.post('/signup/email', controller.postSignup)
 
+  router.post('/UserRating', controller.postUserRating)
+  router.post('/UserProfilePicture', controller.postUserProfilePicture)
+  router.post('/AccountEmail', controller.postAccountEmail)
+  router.post('/AccountPassword', controller.postAccountPassword)
+  router.post('/AccountUsername', controller.postAccountUsername)
+  router.post('/WantToWatch', controller.postWantToWatch)
+  router.post('/Watched', controller.postWatched)
+  router.post('/AccountDelete', controller.postAccountDelete)// I know it's probably unneeded but I'm keeping it for now
+
+
+
   // GET routes 
   router.get('/auth', controller.oAuthGet);
 
   //DELETE routes
 
   // PUT routes
+  router.put('/userRating', controller.putUserRating);
+  router.put('/userProfilePicture', controller.putUserProfilePicture);
+  router.put('/accountEmail', controller.putAccountEmail);
+  router.put('/accountPassword', controller.putAccountPassword);
+  router.put('/accountUsername', controller.putAccountUsername);
+
+  // Update User Account Deletion (PUT is unconventional for deletions, but if needed)
+  router.put('/accountDelete', controller.putAccountDelete);
 
 
   // OAuth 2.0 authentication route
@@ -38,7 +67,7 @@ module.exports = (passport) => {
 
 
   // Protected route example
-  router.get('/profile', controller.getProfile); 
+  router.get('/profile', controller.getProfile);
   /* 
   // =======
   const mongoose = require('mongoose');

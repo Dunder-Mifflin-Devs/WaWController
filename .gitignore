@@ -3,3 +3,4 @@ package-lock.json
 .mongo
 test/coverage
 .DS_Store
+connection.log

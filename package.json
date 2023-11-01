@@ -50,6 +50,9 @@
     "passport-local": "^1.0.0",
     "passport-oauth2": "^1.7.0",
     "session": "^0.1.0",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "express-session": "^1.17.2",
+    "express-validator": "^7.0.0"
+
   }
 }
