@@ -57,6 +57,10 @@ process.env.AUTHORIZATION_URL && require('./config/passport-oauth2')(passport, '
 //Use flash messages for errors, info, etc...
 app.use(flash());
 
+//middleware routes
+const middleware = require("./src/middleware/middleware");
+app.use(middleware.logger);
+
 //microservice routes
 const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
 app.use("/usermgmt", userMgmtRoutes);

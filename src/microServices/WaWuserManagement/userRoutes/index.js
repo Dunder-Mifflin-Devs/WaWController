@@ -1,17 +1,7 @@
 const express = require('express');
-const logger = require('../../../middleware/logger');
-
-const app = express();
 
 require('dotenv').config({ path: '/../../config/.env' });
 const controller = require('../userControllers/userController')
-
-// Custom middleware to log connection attempts using the logger
-app.use((req, res, next) => {
-  const remoteAddress = req.connection.remoteAddress;
-  logger.info(`Connection attempt from ${remoteAddress}`);
-  next();
-});
 
 module.exports = (passport) => {
   const router = express.Router();
@@ -22,24 +12,20 @@ module.exports = (passport) => {
   });
 
   // Protect Local authentication routes using the Local Passport module
-  router.post('/local-login', passport.authenticate('local', { session: false }), (req, res) => {
-    // Local login route logic, protected by Passport Local strategy
-  });
+  router.post('/local-login', passport.authenticate('local', {
+    failureFlase: true
+  }));
+
+  passport.authenticate()
 
 
 
 
-  router.post('/signup/Oauth', controller.oAuthPost)
+  //router.post('/signup/Oauth', controller.oAuthPost)
   router.post('/signup/email', controller.postSignup)
-
-  router.post('/UserRating', controller.postUserRating)
-  router.post('/UserProfilePicture', controller.postUserProfilePicture)
-  router.post('/AccountEmail', controller.postAccountEmail)
-  router.post('/AccountPassword', controller.postAccountPassword)
-  router.post('/AccountUsername', controller.postAccountUsername)
-  router.post('/WantToWatch', controller.postWantToWatch)
-  router.post('/Watched', controller.postWatched)
-  router.post('/AccountDelete', controller.postAccountDelete)// I know it's probably unneeded but I'm keeping it for now
+  router.post('/user-rating', controller.postUserRating)
+  router.post('/profile', controller.postProfile)
+  router.post('/account-delete', controller.postAccountDelete)// I know it's probably unneeded but I'm keeping it for now
 
 
 
@@ -49,14 +35,12 @@ module.exports = (passport) => {
   //DELETE routes
 
   // PUT routes
-  router.put('/userRating', controller.putUserRating);
-  router.put('/userProfilePicture', controller.putUserProfilePicture);
-  router.put('/accountEmail', controller.putAccountEmail);
-  router.put('/accountPassword', controller.putAccountPassword);
-  router.put('/accountUsername', controller.putAccountUsername);
+  router.put('/user-rating', controller.putUserRating);
+  router.put('/user', controller.putUser);
+  router.put('/profile', controller.putProfile);
 
   // Update User Account Deletion (PUT is unconventional for deletions, but if needed)
-  router.put('/accountDelete', controller.putAccountDelete);
+  router.put('/account-delete', controller.postAccountDelete);
 
 
   // OAuth 2.0 authentication route

@@ -1,6 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
-const mongoose = require("mongoose");
 const User = require("../src/microServices/WaWuserManagement/UserModels/User");
+const bcrypt = require("bcrypt");
 
 module.exports = function (passport, label) {
   passport.use(label,
@@ -18,7 +18,8 @@ module.exports = function (passport, label) {
               "Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile.",
           });
         }
-        user.comparePassword(password, (err, isMatch) => {
+
+        bcrypt.compare(password, user.passHash, (err, isMatch) => {
           if (err) {
             return done(err);
           }
@@ -32,10 +33,10 @@ module.exports = function (passport, label) {
   );
 
   passport.serializeUser((user, done) => {
-    done(null, user.id);
+    done(null, user._id);
   });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => done(err, user));
+  passport.deserializeUser((_id, done) => {
+    User.findById(_id, (err, user) => done(err, user));
   });
 };
