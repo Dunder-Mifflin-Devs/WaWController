@@ -59,7 +59,7 @@ app.use(flash());
 
 //middleware routes
 const middleware = require("./src/middleware/middleware");
-app.use(middleware.logger);
+//app.use(middleware.logger);
 
 //microservice routes
 const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);

@@ -10,7 +10,6 @@ const { validateRequestData } = require("../utils/utils");
 module.exports = {
   //POST logic
   postSignup: async (req, res) => {
-    console.log(req.body)
     req.body.email = req.body.email || "";
     const validationErrors = [];
     if (!validator.isEmail(req.body.email))
@@ -28,7 +27,7 @@ module.exports = {
       _id: new mongoose.Types.ObjectId(),
       userName: req.body.userName,
       userEmail: req.body.email,
-      passHash: bcrypt.hashSync(req.body.password),
+      passHash: bcrypt.hashSync(req.body.password, 10),
     });
 
     let existingUser = await User.findOne({ $or: [{ userEmail: req.body.email }, { userName: req.body.userName }] })
@@ -46,10 +45,11 @@ module.exports = {
   postProfile: async (req, res) => {
     validateRequestData(req.body, [], "[insert fields here] are required");
 
+    console.log(req.user);
     try {
       const profile = new Profile({
         _id: new mongoose.Types.ObjectId(),
-        userId: null, //need to require a userId obtained from logged in user
+        userId: req.user._id,
         langPref: req.body.langPref,
         favoriteGenres: req.body.favoriteGenres,
         favoriteMedia: req.body.favoriteMedia,
@@ -59,23 +59,25 @@ module.exports = {
         userFriends: req.body.userFriends
       });
   
-      //after requiring a userId
-      /*
-      let existingUser = await Profile.findOne({ userId: req.body.userid })
-      if (existingUser) {
+      let existingProfile = await Profile.findOne({ userId: req.body.userid })
+      if (existingProfile) {
+        /*
         req.flash("errors", {
           msg: "Profile for the user already exists",
         });
-        return res.status(409).send({ msg: "Profile for the user already exists" });
+        */
+        if (res) res.status(409).send({ msg: "Profile for the user already exists" })
+        return { msg: "Profile for the user already exists" };
       }
-      */
   
       await profile.save();
-      return res.status(201).send({ msg: "Profile created" });
+      if (res) res.status(201).send({ msg: "Profile created" })
+      return { msg: "Profile created" };
     }
     catch(err) {
       console.error(err);
-      return res.status(400).send({ msg: "Failed to create profile" });
+      if (res) res.status(400).send({ msg: "Failed to create profile" })
+      return { msg: "Failed to create profile" };
     }
   },
 
@@ -166,44 +168,48 @@ module.exports = {
 
   putUser: async (req, res) => {
     try {
-      let _id = req.body._id;
       delete req.body._id;
       delete req.body.passHash;
       delete req.body.userEmail;
 
-      let result = await User.updateOne({ _id }, req.body);
+      let result = await User.updateOne({ _id: req.user._id }, req.body);
 
       if (result.matchedCount === 0) {
-        return res.status(404).json({ error: 'User not found.' });
+        if (res) res.status(404).json({ error: 'User not found.' });
+        return { error: 'User not found.' };
       }
 
-      return res.status(201).json({ msg: "User updated successfully" });
+      if (res) res.status(201).json({ msg: "User updated successfully" });
+      return { msg: "User updated successfully" };
 
     }
     catch(err) {
       console.error(err);
-      return res.status(400).send({ msg: "Failed to update user" });
+      if (res) res.status(400).send({ msg: "Failed to update user" });
+      return { msg: "Failed to update user" };
     }
   },
 
   putProfile: async (req, res) => {
     try {
-      let _id = req.body._id;
       delete req.body._id;
       delete req.body.userId;
 
-      let result = await Profile.updateOne({ _id }, req.body);
+      let result = await Profile.updateOne({ userId: req.user._id }, req.body);
 
       if (result.matchedCount === 0) {
-        return res.status(404).json({ error: 'Profile not found.' });
+        if (res) res.status(404).json({ error: 'Profile not found.' });
+        return { error: 'Profile not found.' };
       }
 
-      return res.status(201).json({ msg: "Profile updated successfully" });
+      if (res) res.status(201).json({ msg: "Profile updated successfully" });
+      return { msg: "Profile updated successfully" };
 
     }
     catch(err) {
       console.error(err);
-      return res.status(400).send({ msg: "Failed to update profile" });
+      if (res) res.status(400).send({ msg: "Failed to update profile" });
+      return { msg: "Failed to update profile" };
     }
   },
 

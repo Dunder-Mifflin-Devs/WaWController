@@ -11,8 +11,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbTitleExpected));
+                expect(response.body)
+                    .toEqual(data.omdbTitleExpected);
             })
 
     });
@@ -24,8 +24,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbTitleParamsExpected));
+                expect(response.body)
+                    .toEqual(data.omdbTitleParamsExpected);
             })
 
     });
@@ -37,8 +37,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbTitleErrorExpected));
+                expect(response.body)
+                    .toEqual(data.omdbTitleErrorExpected);
             })
 
     });
@@ -50,8 +50,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbIdExpected));
+                expect(response.body)
+                    .toEqual(data.omdbIdExpected);
             })
 
     });
@@ -63,8 +63,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbIdErrorExpected));
+                expect(response.body)
+                    .toEqual(data.omdbIdErrorExpected);
             })
 
     });
@@ -82,7 +82,7 @@ describe("Media Routes Tests", () => {
                     .toBe(true);
 
                 expect(body.results.length)
-                    .toBe(data.omdbRandomAmount);
+                    .toEqual(data.omdbRandomAmount);
                 
                 for (let item of body.results) {
                     let properties = ["Title", "Year", "imdbID", "Type", "Poster"];
@@ -110,7 +110,7 @@ describe("Media Routes Tests", () => {
                     .toBe(true);
 
                 expect(body.results.length)
-                    .toBe(data.omdbRandomParamsAmount);
+                    .toEqual(data.omdbRandomParamsAmount);
                 
                 for (let item of body.results) {
                     let properties = ["Title", "Year", "imdbID", "Type", "Poster"];
@@ -132,8 +132,8 @@ describe("Media Routes Tests", () => {
             .expect('Content-Type', /json/)
             .expect(200)
             .then(response => {
-                expect(JSON.stringify(response.body))
-                    .toBe(JSON.stringify(data.omdbRandomErrorExpected));
+                expect(response.body)
+                    .toEqual(data.omdbRandomErrorExpected);
             })
 
     });

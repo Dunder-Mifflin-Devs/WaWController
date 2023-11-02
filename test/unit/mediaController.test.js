@@ -33,8 +33,8 @@ describe("Media Controller Tests", () => {
             else return data.omdbTitleResponse;
         });
 
-        expect(JSON.stringify(await searchOMDB(data.omdbTitleRequest)))
-            .toBe(JSON.stringify(data.omdbTitleExpected));
+        expect(await searchOMDB(data.omdbTitleRequest))
+            .toEqual(data.omdbTitleExpected);
     })
 
     test("results of an api error in a title or id search are handled correctly", async () => {
@@ -42,8 +42,8 @@ describe("Media Controller Tests", () => {
             throw "Error Occurred"
         });
 
-        expect(JSON.stringify(await searchOMDB(data.omdbTitleRequest)))
-            .toBe(JSON.stringify(data.omdbErrorExpected));
+        expect(await searchOMDB(data.omdbTitleRequest))
+            .toEqual(data.omdbErrorExpected);
     })
 
     test("results of an id search are formatted correctly", async () => {
@@ -52,43 +52,43 @@ describe("Media Controller Tests", () => {
             else return { Response: False };
         });
 
-        expect(JSON.stringify(await searchOMDB(data.omdbIdRequest)))
-            .toBe(JSON.stringify(data.omdbIdExpected));
+        expect(await searchOMDB(data.omdbIdRequest))
+            .toEqual(data.omdbIdExpected);
     })
 
     test("results of a failed search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbErrorResponse);
 
-        expect(JSON.stringify(await searchOMDB(data.omdbErrorRequest)))
-            .toBe(JSON.stringify(data.omdbErrorExpected));
+        expect(await searchOMDB(data.omdbErrorRequest))
+            .toEqual(data.omdbErrorExpected);
     })
 
     test("results of a random search of 5 are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
 
-        expect(JSON.stringify(await randomOMDB(data.omdbRandomRequest5)))
-            .toBe(JSON.stringify(data.omdbRandomExpected5));
+        expect(await randomOMDB(data.omdbRandomRequest5))
+            .toEqual(data.omdbRandomExpected5);
     })
 
     test("results of a random search of 10 are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
 
-        expect(JSON.stringify(await randomOMDB(data.omdbRandomRequest10)))
-            .toBe(JSON.stringify(data.omdbRandomExpected10));
+        expect(await randomOMDB(data.omdbRandomRequest10))
+            .toEqual(data.omdbRandomExpected10);
     })
 
     test("results of a random search of 15 are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
 
-        expect(JSON.stringify(await randomOMDB(data.omdbRandomRequest15)))
-            .toBe(JSON.stringify(data.omdbRandomExpected15));
+        expect(await randomOMDB(data.omdbRandomRequest15))
+            .toEqual(data.omdbRandomExpected15);
     })
 
     test("results of an error in a random search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
 
-        expect(JSON.stringify(await randomOMDB(data.omdbRandomErrorRequest)))
-            .toBe(JSON.stringify(data.omdbRandomErrorExpected));
+        expect(await randomOMDB(data.omdbRandomErrorRequest))
+            .toEqual(data.omdbRandomErrorExpected);
     })
 
     test("results of an api error in random search are handled correctly", async () => {
@@ -96,7 +96,7 @@ describe("Media Controller Tests", () => {
             throw "Error Occurred"
         });
 
-        expect(JSON.stringify(await randomOMDB(data.omdbRandomErrorRequest)))
-            .toBe(JSON.stringify(data.omdbRandomErrorExpected));
+        expect(await randomOMDB(data.omdbRandomErrorRequest))
+            .toEqual(data.omdbRandomErrorExpected);
     })
 })

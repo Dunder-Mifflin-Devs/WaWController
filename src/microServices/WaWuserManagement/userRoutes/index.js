@@ -12,9 +12,9 @@ module.exports = (passport) => {
   });
 
   // Protect Local authentication routes using the Local Passport module
-  router.post('/local-login', passport.authenticate('local', {
-    failureFlase: true
-  }));
+  router.post('/local-login', passport.authenticate('local'), (req, res) => {
+    return res.status(200).send();
+  });
 
   passport.authenticate()
 
@@ -24,7 +24,7 @@ module.exports = (passport) => {
   //router.post('/signup/Oauth', controller.oAuthPost)
   router.post('/signup/email', controller.postSignup)
   router.post('/user-rating', controller.postUserRating)
-  router.post('/profile', controller.postProfile)
+  router.post('/profile', passport.authenticate("local"), controller.postProfile)
   router.post('/account-delete', controller.postAccountDelete)// I know it's probably unneeded but I'm keeping it for now
 
 
@@ -36,8 +36,8 @@ module.exports = (passport) => {
 
   // PUT routes
   router.put('/user-rating', controller.putUserRating);
-  router.put('/user', controller.putUser);
-  router.put('/profile', controller.putProfile);
+  router.put('/user', passport.authenticate("local"), controller.putUser);
+  router.put('/profile', passport.authenticate("local"), controller.putProfile);
 
   // Update User Account Deletion (PUT is unconventional for deletions, but if needed)
   router.put('/account-delete', controller.postAccountDelete);
