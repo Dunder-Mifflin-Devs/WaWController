@@ -25,8 +25,7 @@ module.exports = {
     putRating: async (req, res) => {
         try {
             const dbCallBody = {
-                _id: req.params.rating,
-                mediaId: req.params.id,
+                _id: req.params.id,
                 userId: req.user._id
             };
 
