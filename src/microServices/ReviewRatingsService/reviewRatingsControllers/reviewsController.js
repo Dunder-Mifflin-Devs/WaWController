@@ -1,4 +1,5 @@
-const createError= require('http-errors')
+const createError= require('http-errors');
+const Rating = require("")
 
 // Reviews Controller for fetching and posting to database
 module.exports = {
@@ -20,6 +21,10 @@ module.exports = {
 
         verifyDbResponseSendStatus(req, res, dbCallBody)
     },
+
+    putRating: async (req, res) => {
+        
+    }
 }
 
 //TODO: not 100% sure this will work
