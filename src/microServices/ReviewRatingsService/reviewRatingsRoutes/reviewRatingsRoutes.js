@@ -8,8 +8,8 @@ module.exports = (passport) => {
     const router= express.Router();
 
     // POST routes
-    router.post('/:id/rating/:rating', rController.postRating) //5 star 
-    router.post('/:id', rController.postReview) //review text
+    router.post('/:id/rating/:rating', passport.authenticate("local"), rController.postRating) //5 star 
+    router.post('/:id', passport.authenticate("local"), rController.postReview) //review text
 
     // GET routes
 

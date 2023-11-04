@@ -60,3 +60,8 @@ const verifyDbResponseSendStatus = async(req, res, body) => {
 
     return responseFromDB ? res.sendStatus(204) : res.sendStatus(500, "DB error")
 }
+
+   // TODO: if user opens a media property to rate or review, create document(s) for that.
+
+    // TODO: if user opens a media property to rate or review, but does not do so, ensure that no empty document stagnates in the database.
+
