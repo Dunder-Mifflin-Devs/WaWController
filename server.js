@@ -71,6 +71,9 @@ app.use("/search", searchRoutes);
 const mediaRoutes = require("./src/microServices/MediaService/mediaRoutes/mediaRoutes")(passport);
 app.use("/media", mediaRoutes);
 
+const reviewRatingsRoutes = require("./src/microServices/ReviewRatingsService/reviewRatingsRoutes/reviewRatingsRoutes")(passport);
+app.use("/reviews", reviewRatingsRoutes);
+
 
 app.get("/loginOauth", passport.authenticate("oauth2", {
   session: true,
