@@ -50,6 +50,12 @@ module.exports = {
         }
     },
 
+    // TODO: if user opens a media property to rate or review, create document(s) for that.
+
+    // TODO: if user opens a media property to rate or review, but does not do so, ensure that no empty document stagnates in the database.
+
+
+
     // get random movies, tv shows, or both from OMDB
     /* Example parameters
          type: "movie"
