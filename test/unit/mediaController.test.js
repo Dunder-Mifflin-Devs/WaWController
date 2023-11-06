@@ -25,7 +25,7 @@ describe("Media Controller Tests", () => {
       
     afterEach(() => {
         console.error.mockRestore()
-    })
+    });
 
     test("results of a title search are formatted correctly", async () => {
         omdbSearch.mockImplementation((params) => {

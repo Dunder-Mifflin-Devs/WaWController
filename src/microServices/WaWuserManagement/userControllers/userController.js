@@ -45,7 +45,6 @@ module.exports = {
   postProfile: async (req, res) => {
     validateRequestData(req.body, [], "[insert fields here] are required");
 
-    console.log(req.user);
     try {
       const profile = new Profile({
         _id: new mongoose.Types.ObjectId(),

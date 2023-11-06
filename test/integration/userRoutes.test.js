@@ -32,7 +32,7 @@ describe("User Management Routes Tests", () => {
         await request(app)
             .post("/usermgmt/local-login")
             .send(data.validLogin)
-            expect(200);
+            .expect(200);
     });
 
     test("if invalid login credentials are unable to login", async () => {

@@ -9,7 +9,7 @@ module.exports = {
             rating: req.params.rating,
             id: req.params.id
         }
-        verifyDbResponseSendStatus(req, res, dbCallBody)
+        //verifyDbResponseSendStatus(req, res, dbCallBody)
     }, 
 
     postReview: async (req, res) => {
@@ -19,7 +19,7 @@ module.exports = {
             review: req.body.review,
         }
 
-        verifyDbResponseSendStatus(req, res, dbCallBody)
+        //verifyDbResponseSendStatus(req, res, dbCallBody)
     },
 
     putRating: async (req, res) => {
@@ -35,12 +35,12 @@ module.exports = {
                 timestamp: Date.now()
             };
 
-            let result = Rating.updateOne(dbCallBody, dbUpdate);
+            let result = await Rating.updateOne(dbCallBody, dbUpdate);
 
             if (result.matchedCount === 0) {
                 if (res) res.status(404).json({ success: false, message: 'Rating not found' });
                 return { success: false, message: 'Rating not found' };
-              }
+            }
 
             if (res) res.status(201).json({ success: true, message: "Updated rating/review" });
             return { success: true, message: "Updated rating/review" };
@@ -54,11 +54,13 @@ module.exports = {
 }
 
 //TODO: not 100% sure this will work
+/*
 const verifyDbResponseSendStatus = async(req, res, body) => {
     const responseFromDB= await makeDBCall(body);
 
     return responseFromDB ? res.sendStatus(204) : res.sendStatus(500, "DB error")
 }
+*/
 
    // TODO: if user opens a media property to rate or review, create document(s) for that.
 
