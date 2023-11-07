@@ -1,14 +1,12 @@
 const express= require('express');
-const router= express.Router();
-const msController= require('../mediaControllers/mediaControllers')
+const controller= require('../mediaControllers/mediaControllers')
 
 
-// POST routes
+module.exports = (passport) => {
+    const router = express.Router();
 
-// GET routes
-router.get('/:id', msController.getShowById)
-// DELETE routes
-
-// PUT routes
-
-module.exports= router;
+    // Search OMDB for matching tv shows and movies
+    router.get('/omdb/search', controller.searchOMDB);
+    router.get('/omdb/random', controller.randomOMDB);
+    return router;
+};

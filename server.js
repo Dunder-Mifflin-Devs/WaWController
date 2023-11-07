@@ -58,11 +58,17 @@ process.env.AUTHORIZATION_URL && require('./config/passport-oauth2')(passport, '
 //Use flash messages for errors, info, etc...
 app.use(flash());
 
-
-/* TODO wide open routes go here*/
+//microservice routes
 const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
 app.use("/usermgmt", userMgmtRoutes);
-/* TODO secure routes go here*/
+
+const searchRoutes = require("./src/microServices/WaWSearch/searchRoutes/searchRoutes")(passport);
+app.use("/search", searchRoutes);
+
+const mediaRoutes = require("./src/microServices/MediaService/mediaRoutes/mediaRoutes")(passport);
+app.use("/media", mediaRoutes);
+
+
 app.get("/loginOauth", passport.authenticate("oauth2", {
   session: true,
   successReturnToOrRedirect: "/"
