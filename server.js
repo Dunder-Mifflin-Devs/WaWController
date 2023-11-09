@@ -74,6 +74,7 @@ app.get("/loginOauth", passport.authenticate("oauth2", {
   successReturnToOrRedirect: "/"
 }))
 
+
 // Google Auth consent screen route
 app.get('/google',
     passport.authenticate('google', {

@@ -8,9 +8,13 @@ router.post("/signup", authController.postSignup);
 router.post('/', authController.auth);
 router.post
 
+router.get("/logout", authController.logout);
+
+
 module.exports = router;
 
 //from here you will call the controller for the service
+
 
 
 /*
@@ -27,7 +31,7 @@ router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/feed", ensureAuth, postsController.getFeed);
 router.get("/login", authController.getLogin);
 router.post("/login", authController.postLogin);
-router.get("/logout", authController.logout);
+
 
 
 module.exports = router;
