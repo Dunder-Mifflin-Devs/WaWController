@@ -1,6 +1,7 @@
 const data = require("./reviewsController.data");
 const { putRating } = require("../../src/microServices/ReviewRatingsService/reviewRatingsControllers/reviewsController");
 const { updateOne } = require("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels");
+const { postRating } = require("../../src/microServices/ReviewRatingsService/reviewRatingsControllers/reviewsController");
 
 //sets up the functinos to mock
 jest.mock("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels", () => {
