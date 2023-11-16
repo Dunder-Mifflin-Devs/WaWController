@@ -43,7 +43,8 @@ let invalidLogin = {
 };
 
 let exampleEmail = "example@gmail.com";
-let exampleUsername = "User 1"
+let exampleUsername = "User 1";
+
 module.exports = {
     postProfileBody,
     validLogin,

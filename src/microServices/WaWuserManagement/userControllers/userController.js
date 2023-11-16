@@ -156,18 +156,24 @@ module.exports = {
 
   getProfile: async (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: 'Unauthorized' });
+      if (res) res.status(401).json({ error: 'Unauthorized' });
+      return { error: 'Unauthorized' };
     }
 
     try {
       const profile = await Profile.findOne({ userId: req.user._id });
       if (!profile) {
-        return res.status(404).json({ error: 'Profile not found.' });
+        if (res) res.status(404).json({ error: 'Profile not found.' })
+        return { error: 'Profile not found.' };
       }
-      res.json(profile);
+
+      if (res) res.json(profile)
+      return profile;
     } catch (err) {
       console.error(err);
-      res.status(500).send({ message: 'Error fetching profile data' });
+      
+      if (res) res.status(500).send({ message: 'Error fetching profile data' })
+      return { message: 'Error fetching profile data' };
     }
   },
   //DELETE logic

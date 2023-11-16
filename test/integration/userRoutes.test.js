@@ -112,4 +112,61 @@ describe("User Management Routes Tests", () => {
                 ...data.putProfileBody
             });
     });
-})
+
+    test("if a logged in user is able to get their profile", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ msg: "Profile created" });
+            });
+        
+        await request(app)
+            .get("/usermgmt/profile")
+            .send({
+                ...data.validLogin
+            })
+            .expect(200)
+            .then(res => {
+                expect(res.body)
+                    .toMatchObject(data.postProfileBody)
+            });
+    });
+
+    test("if getProfile without being logged in is handled properly", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ msg: "Profile created" });
+            });
+        
+        await request(app)
+            .get("/usermgmt/profile")
+            .expect(400);
+    });
+
+    test("if getProfile for a user without a profile is handled properly", async () => {
+    
+        await request(app)
+            .get("/usermgmt/profile")
+            .send({
+                ...data.validLogin
+            })
+            .expect(404)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ error: 'Profile not found.' });
+            });
+    });
+});

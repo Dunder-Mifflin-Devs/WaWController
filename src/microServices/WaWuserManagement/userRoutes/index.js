@@ -52,7 +52,7 @@ module.exports = (passport) => {
 
 
   // Protected route example
-  router.get('/profile', ensureAuth, controller.getProfile);
+  router.get('/profile', passport.authenticate("local"), ensureAuth, controller.getProfile);
   /* 
   // =======
   const mongoose = require('mongoose');
