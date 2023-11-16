@@ -154,11 +154,20 @@ module.exports = {
     });
   },
 
-  getProfile: (req, res) => {
-    if (req.isAuthenticated()) {
-      res.json({ message: 'Welcome to the Profile Page' });
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
+  getProfile: async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    try {
+      const profile = await Profile.findOne({ userId: req.user._id });
+      if (!profile) {
+        return res.status(404).json({ error: 'Profile not found.' });
+      }
+      res.json(profile);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send({ message: 'Error fetching profile data' });
     }
   },
   //DELETE logic
