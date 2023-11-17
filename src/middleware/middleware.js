@@ -22,7 +22,7 @@ module.exports = {
         if (req.isAuthenticated()) {
             return next();
         } else {
-            return next(httpErrors(403,"Please login"));
+            return res.status(403).send("Please login");
         }
       },
     ensureGuest: function (req, res, next) {

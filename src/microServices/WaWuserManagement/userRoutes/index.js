@@ -2,6 +2,7 @@ const express = require('express');
 
 require('dotenv').config({ path: '/../../config/.env' });
 const controller = require('../userControllers/userController')
+const {ensureAuth} = require("../../../middleware/middleware");
 
 module.exports = (passport) => {
   const router = express.Router();
@@ -51,7 +52,7 @@ module.exports = (passport) => {
 
 
   // Protected route example
-  router.get('/profile', controller.getProfile);
+  router.get('/profile', passport.authenticate("local"), ensureAuth, controller.getProfile);
   /* 
   // =======
   const mongoose = require('mongoose');
