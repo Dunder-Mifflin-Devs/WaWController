@@ -1,6 +1,7 @@
 const { connectDB, clearDB, closeDB } = require("../../config/database");
 const user = require("../../src/microServices/WaWuserManagement/UserModels/User");
 const media = require("../../src/microServices/MediaService/mediaModels/mediaModels");
+const reviewRating = require("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels");
 const mongoose = require("mongoose");
 
 //test suite to determine if the database is connected (throws error is something wrong happens)
@@ -49,11 +50,53 @@ describe("test database connection", () => {
                 totalRatings: 1,
                 numberOfRatings: 1
             };
-            let result = await media.create(newMedia);
+            await media.create(newMedia);
 
             throw "Example error"
         } catch(err) {
             expect(err._message).toBe("Media validation failed");
         }
     });
+
+    test("if review model works", async () => {
+        let newReview = {
+            _id: new mongoose.Types.ObjectId(),
+            userId: new mongoose.Types.ObjectId(),
+            mediaId: "tt0133093",
+            review: "let"
+        };
+        await reviewRating.create(newReview);
+
+        expect(await reviewRating.findOne({mediaId: "tt0133093"}))
+            .toMatchObject(newReview);
+    });
+
+    test("if rating model works", async () => {
+        let newRating = {
+            _id: new mongoose.Types.ObjectId(),
+            userId: new mongoose.Types.ObjectId(),
+            mediaId: "tt0133093",
+            rating: 5
+        };
+        await reviewRating.create(newRating);
+
+        expect(await reviewRating.findOne({mediaId: "tt0133093"}))
+            .toMatchObject(newRating);
+    });
+
+    test("if rating model does not work with unexpected rating", async () => {
+        try {
+            let newRating = {
+                _id: new mongoose.Types.ObjectId(),
+                userId: new mongoose.Types.ObjectId(),
+                mediaId: "tt0133093",
+                rating: 6
+            };
+            await reviewRating.create(newRating);
+
+            throw "Example error"
+        } catch(err) {
+            expect(err._message).toBe("ReviewRating validation failed");
+        }
+    })
 });
