@@ -55,3 +55,4 @@ describe("User Controller Tests", () => {
             .toMatchObject(data.getProfileErrorResponse);
     });
 })
+
