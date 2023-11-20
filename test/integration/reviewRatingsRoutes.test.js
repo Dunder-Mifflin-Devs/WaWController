@@ -9,15 +9,15 @@ describe("Review/Rating Routes Tests", () => {
     beforeAll(async () => await connectDB());
     beforeEach(async () => {
         await user.create(data.exampleUser);
+        await user.create(data.exampleUser2);
         await reviewRating.create(data.exampleRating);
-        await reviewRating.create(data.exampleRating2);
     });
     afterEach(async () => await clearDB());
     afterAll(async () => await closeDB());
 
     test("if review/rating is updated", async () => {
         await request(app)
-            .put(data.putRatingTestURL1)
+            .put(data.putRatingTestURL)
             .send({
                 ...data.exampleUserLogin,
                 ...data.exampleRatingUpdate
@@ -35,39 +35,34 @@ describe("Review/Rating Routes Tests", () => {
             });
     });
 
-    test("if review/rating of other user is not updated", async () => {
+    test("if non-existant review/rating is not updated", async () => {
         await request(app)
-            .put(data.putRatingTestURL2)
+            .put(data.putRatingTestURL)
             .send({
-                ...data.exampleUserLogin,
+                ...data.exampleUser2Login,
                 ...data.exampleRatingUpdate
             })
             .expect(404)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ success: false, message: 'Rating not found' })
-            });
-        
-        expect(await reviewRating.findById(data.exampleRating2Id))
-            .toMatchObject({
-                ...data.exampleRating2
+                    .toEqual({ success: false, message: 'Review/rating not found' })
             });
     });
 
     test("if updating of invalid review/rating is handled correctly", async () => {
         await request(app)
-            .put(data.putRatingTestURL3)
+            .put(data.putRatingTestURL)
             .send({
                 ...data.exampleUserLogin,
-                ...data.exampleRatingUpdate
+                ...data.exampleRatingUpdate2
             })
-            .expect(404)
+            .expect(500)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ success: false, message: 'Rating not found' })
+                    .toEqual({ success: false, message: 'Failed to update rating/review' })
             });
         
-        expect(await reviewRating.findById(data.exampleRating3Id))
-            .toBe(null);
+        let temp = await reviewRating.findById(data.exampleRatingId);
+        expect(temp).toMatchObject({ rating: data.exampleRating.rating });
     });
 });

@@ -1,5 +1,5 @@
 const data = require("./reviewsController.data");
-const { putRating } = require("../../src/microServices/ReviewRatingsService/reviewRatingsControllers/reviewsController");
+const { putReviewRating } = require("../../src/microServices/ReviewRatingsService/reviewRatingsControllers/reviewsController");
 const { updateOne } = require("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels");
 
 //sets up the functinos to mock
@@ -27,7 +27,7 @@ describe("Review/Rating Controller Tests", () => {
             }
         });
 
-        expect(await putRating(data.examplePutRatingRequest))
+        expect(await putReviewRating(data.examplePutRatingRequest))
             .toEqual({ success: true, message: "Updated rating/review" });
     });
 
@@ -38,8 +38,8 @@ describe("Review/Rating Controller Tests", () => {
             }
         });
 
-        expect(await putRating(data.examplePutRatingRequest))
-            .toEqual({ success: false, message: 'Rating not found' });
+        expect(await putReviewRating(data.examplePutRatingRequest))
+            .toEqual({ success: false, message: 'Review/rating not found' });
     });
 
     test("results of an invalid rating update are formatted correctly", async () => {
@@ -47,7 +47,7 @@ describe("Review/Rating Controller Tests", () => {
             throw "Example Error";
         });
 
-        expect(await putRating(data.examplePutRatingRequest))
+        expect(await putReviewRating(data.examplePutRatingRequest))
             .toEqual({ success: false, message: "Failed to update rating/review" });
     });
 });

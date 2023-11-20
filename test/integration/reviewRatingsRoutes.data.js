@@ -3,10 +3,6 @@ const bcrypt = require("bcrypt");
 
 let exampleRatingId = new mongoose.Types.ObjectId();
 
-let exampleRating2Id = new mongoose.Types.ObjectId();
-
-let exampleRating3Id = new mongoose.Types.ObjectId();
-
 let exampleUserId = new mongoose.Types.ObjectId();
 
 let exampleUser2Id = new mongoose.Types.ObjectId();
@@ -18,10 +14,22 @@ let exampleUser = {
     passHash: bcrypt.hashSync("password", 10),
 }
 
+let exampleUser2 = {
+    _id: exampleUser2Id,
+    userEmail: "example2@gmail.com",
+    userName: "User 2",
+    passHash: bcrypt.hashSync("password2", 10)
+};
+
 let exampleUserLogin = {
     email: "example@gmail.com",
     password: "password"
-}
+};
+
+let exampleUser2Login = {
+    email: "example2@gmail.com",
+    password: "password2"
+};
 
 let exampleRating = {
     _id: exampleRatingId,
@@ -31,33 +39,25 @@ let exampleRating = {
     review: "example"
 }
 
-let exampleRating2 = {
-    _id: exampleRating2Id,
-    userId: exampleUser2Id,
-    mediaId: "tt0133093",
-    rating: 5,
-    review: "example 2"
-}
-
 let exampleRatingUpdate = {
     rating: 3
 }
 
-let putRatingTestURL1 = "/reviews/" + exampleRatingId;
-let putRatingTestURL2 = "/reviews/" + exampleRating2Id;
-let putRatingTestURL3 = "/reviews/" + exampleRating3Id;
+let exampleRatingUpdate2 = {
+    rating: 6
+}
+
+let putRatingTestURL = "/reviews/tt0133093";
 
 module.exports = {
     exampleRatingId,
-    exampleRating2Id,
-    exampleRating3Id,
     exampleRating,
-    exampleRating2,
     exampleRatingUpdate,
+    exampleRatingUpdate2,
     exampleUser,
+    exampleUser2,
     exampleUserLogin,
-    putRatingTestURL1,
-    putRatingTestURL2,
-    putRatingTestURL3
+    exampleUser2Login,
+    putRatingTestURL
 }
 
