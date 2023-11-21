@@ -120,19 +120,15 @@ module.exports = {
     getReviews: async (req, res) => {
         let mediaId = req.params.mediaId;
         let page = req.params.page || 1;
-        let pageSize = req.body.pageSize || 20;
+        let pageSize = (req.body || {}).pageSize || 20;
 
         try {
             let results = await Rating.find({
                 mediaId
             })
-            .populate(userId).skip(page * pageSize).limit(pageSize);
-            if (!results) {
-                if (res) res.status(404).json({ success: false, message: "No media matches the given id" });
-                return { success: false, message: "No media matches the given id" };
-            }
+            .populate("userId").skip(page * pageSize).limit(pageSize);
 
-            let count = await Rating.find({mediaId}).count();
+            let count = await Rating.countDocuments({ mediaId });
             for (let result of results) {
                 result.userId = result.userId.userName
             }
