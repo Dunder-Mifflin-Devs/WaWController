@@ -126,12 +126,16 @@ module.exports = {
             let results = await Rating.find({
                 mediaId
             })
-            .populate("userId").skip(page * pageSize).limit(pageSize);
+            .populate("userId").skip((page - 1) * pageSize).limit(pageSize);
 
             let count = await Rating.countDocuments({ mediaId });
+            console.log(results)
             for (let result of results) {
+                console.log(result)
                 result.userId = result.userId.userName
+                console.log(result)
             }
+            console.log(results)
 
             if (res) res.json({ success: true, results, count });
             return { success: true, results, count };
