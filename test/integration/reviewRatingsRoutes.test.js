@@ -281,7 +281,10 @@ describe("Review/Rating Routes Tests", () => {
             .expect(200)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ averageRating: data.exampleMedia.totalRatings / data.exampleMedia.numberOfRatings });
+                    .toEqual({
+                        averageRating: data.exampleMedia.totalRatings / data.exampleMedia.numberOfRatings,
+                        numberOfRatings: data.exampleMedia.numberOfRatings
+                    });
             });
     });
 

@@ -23,6 +23,12 @@ module.exports = {
         //verifyDbResponseSendStatus(req, res, dbCallBody)
     },
 
+    /*
+    Updates a review and/or rating for a media by the logged in user
+    example body:
+        rating: 3
+        review: "new review"
+    */
     putReviewRating: async (req, res) => {
         try {
             const dbCallBody = {
@@ -53,6 +59,9 @@ module.exports = {
         }
     },
 
+    /*
+    Gets the review and rating for a media by the logged in user
+    */
     getReviewRating: async (req, res) => {
         try {
             const dbCallBody = {
@@ -76,6 +85,11 @@ module.exports = {
         }
     },
 
+    /*
+    Deletes either the review or rating and review for a media by the logged in user
+    example body:
+        delete: "review"
+    */
     deleteReviewRating: async (req, res) => {
         let deleteType = req.body.delete || "";
 
@@ -127,6 +141,11 @@ module.exports = {
         }
     },
 
+    /*
+    Gets a page of reviews for a media
+    example query parameters:
+        pageSize: 20
+    */
     getReviews: async (req, res) => {
         let mediaId = req.params.mediaId;
         let page = req.params.page || 1;
@@ -163,6 +182,9 @@ module.exports = {
         }
     },
 
+    /*
+    Gets the average rating and number of ratings for a given media
+    */
     getAverageRating: async (req, res) => {
         let mediaId = req.params.mediaId;
         
@@ -175,8 +197,8 @@ module.exports = {
             }
 
             let averageRating = result.totalRatings / result.numberOfRatings;
-            if (res) res.json({ averageRating });
-            return { averageRating };
+            if (res) res.json({ averageRating, numberOfRatings: result.numberOfRatings });
+            return { averageRating, numberOfRatings: result.numberOfRatings };
         }
         catch(err) {
             console.error(err);

@@ -151,7 +151,7 @@ describe("Review/Rating Controller Tests", () => {
         });
 
         expect(await getAverageRating(data.exampleGetAverageRatingRequest))
-            .toEqual({ averageRating: data.exampleAverageRating });
+            .toEqual({ averageRating: data.exampleAverageRating, numberOfRatings: data.exampleMediaInfo.numberOfRatings });
     });
 
     test("results of a getAverageRating request with an invalid mediaId are formatted correctly", async () => {
