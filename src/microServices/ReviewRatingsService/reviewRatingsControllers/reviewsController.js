@@ -81,7 +81,7 @@ module.exports = {
 
         try {
             deleteType = deleteType.toLowerCase();
-            if (deleteType !== "review" && deleteType !== "rating") {
+            if (deleteType !== "review") {
                 deleteType = "both"
             };
 
@@ -90,10 +90,12 @@ module.exports = {
                 userId: req.user._id
             };
             const dbUpdateBody = {
-                review: (deleteType !== "rating") ? null : undefined,
+                review: null,
                 rating: (deleteType !== "review") ? null : undefined,
                 timestamp: Date.now()
             };
+
+            let review = await Rating.findOne(dbCallBody);
 
             let result = await Rating.updateOne(dbCallBody, dbUpdateBody);
             if (result.matchedCount === 0) {
@@ -101,9 +103,16 @@ module.exports = {
                 return { success: false, message: 'Review/rating not found' };
             }
 
-            result = await Rating.findOne(dbCallBody);
-            if (result.review === null && result.rating === null) {
+            if (deleteType !== "review") {
                 await Rating.deleteOne(dbCallBody);
+                await Media.updateOne({
+                    imdbId: req.params.mediaId
+                }, {
+                    $inc: {
+                        totalRatings: -review.rating,
+                        numberOfRatings: -1
+                    }
+                });
             }
 
             if (res) res.status(200).json({ success: true, message: "Deleted review/rating"});
@@ -111,6 +120,7 @@ module.exports = {
 
         }
         catch(err) {
+            console.log(err);
             console.error(err);
             if (res) res.status(500).json({ success: false, message: "Failed to delete review/rating" });
             return { success: false, message: "Failed to delete review/rating" };
@@ -120,22 +130,28 @@ module.exports = {
     getReviews: async (req, res) => {
         let mediaId = req.params.mediaId;
         let page = req.params.page || 1;
-        let pageSize = (req.body || {}).pageSize || 20;
+        let pageSize = (req.query || {}).pageSize || 20;
 
         try {
+            if (isNaN(page - 1)) throw "Invalid page given";
+
             let results = await Rating.find({
                 mediaId
             })
             .populate("userId").skip((page - 1) * pageSize).limit(pageSize);
 
             let count = await Rating.countDocuments({ mediaId });
-            console.log(results)
-            for (let result of results) {
-                console.log(result)
-                result.userId = result.userId.userName
-                console.log(result)
-            }
-            console.log(results)
+            results = results.map(x => {
+                return {
+                    _id: x._id,
+                    userId: x.userId._id || x.userId,
+                    userName: x.userId.userName,
+                    mediaId: x.mediaId,
+                    rating: x.rating,
+                    review: x.review,
+                    timestamp: x.timestamp
+                }
+            });
 
             if (res) res.json({ success: true, results, count });
             return { success: true, results, count };
@@ -151,7 +167,7 @@ module.exports = {
         let mediaId = req.params.mediaId;
         
         try {
-            let result = await Media.findOne({ mediaId });
+            let result = await Media.findOne({ imdbId: mediaId });
 
             if (!result) {
                 if (res) res.status(404).json({ success: false, message: "No media found with the given id" });

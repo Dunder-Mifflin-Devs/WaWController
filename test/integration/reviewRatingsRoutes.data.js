@@ -63,6 +63,12 @@ let exampleRating2 = {
     review: "example2"
 }
 
+let exampleMedia = {
+    imdbId: "tt0133093",
+    totalRatings: 8,
+    numberOfRatings: 2 
+}
+
 let exampleRatingUpdate = {
     rating: 3
 }
@@ -77,8 +83,9 @@ let deleteReviewRatingURL = "/reviews/tt0133093";
 let getReviewsURLPage1 = "/reviews/tt0133093/1";
 let getReviewsURLPage2 = "/reviews/tt0133093/2";
 let getReviewsURLInvalidPage = "/reviews/tt0133093/a";
-let getReviewsURLId2 = "/reviews/tt0133094"
+let getReviewsURLId2 = "/reviews/tt0133094/1"
 let getAverageRatingURL = "/reviews/tt0133093/rating";
+let getAverageRatingURLId2 = "/reviews/tt0133094/rating";
 
 module.exports = {
     exampleRatingId,
@@ -93,6 +100,7 @@ module.exports = {
     exampleUserLogin,
     exampleUser2Login,
     exampleUser3Login,
+    exampleMedia,
     putRatingTestURL,
     getReviewRatingURL,
     deleteReviewRatingURL,
@@ -100,6 +108,7 @@ module.exports = {
     getReviewsURLPage2,
     getReviewsURLInvalidPage,
     getReviewsURLId2,
-    getAverageRatingURL
+    getAverageRatingURL,
+    getAverageRatingURLId2
 }
 

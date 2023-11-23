@@ -15,12 +15,14 @@ jest.mock("../../src/microServices/ReviewRatingsService/reviewRatingsModels/revi
         find: jest.fn(),
         findOne: jest.fn(),
         updateOne: jest.fn(),
-        countDocuments: jest.fn()
+        countDocuments: jest.fn(),
+        deleteOne: jest.fn()
     }
 });
 jest.mock("../../src/microServices/MediaService/mediaModels/mediaModels", () => {
     return {
-        findOne: jest.fn()
+        findOne: jest.fn(),
+        updateOne: jest.fn()
     }
 });
 
@@ -74,6 +76,16 @@ describe("Review/Rating Controller Tests", () => {
         });
         Rating.findOne.mockImplementation((dbCallbody) => {
             return data.exampleRating
+        });
+        Rating.deleteOne.mockImplementation((dbCallBody) => {
+            return {
+                matchedCount: 1
+            }
+        });
+        Media.findOne.mockImplementation((dbCallBody) => {
+            return {
+                matchedCount: 1
+            }
         });
 
         expect(await deleteReviewRating(data.exampleDeleteRatingRequest))
@@ -176,8 +188,15 @@ describe("Review/Rating Controller Tests", () => {
             return data.exampleReviews.length
         });
 
-        expect(await getReviews(data.exampleGetReviewsRequest))
-            .toEqual({ success: true, results: data.exampleReviews, count: data.exampleReviews.length });
+        let result = await getReviews(data.exampleGetReviewsRequest);
+        expect(result)
+            .toMatchObject({ success: true, count: data.exampleReviews.length });
+        
+        expect(result.results.length)
+            .toBe(data.exampleReviews.length);
+
+        expect(result.results)
+            .toMatchObject(data.exampleReviews);
     });
 
     test("resuts of a getReviews request that caused an error in find are formatted correctly", async () => {
