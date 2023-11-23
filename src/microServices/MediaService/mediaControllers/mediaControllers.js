@@ -1,5 +1,5 @@
 const { getRandomWord } = require("../utils/randomWords");
-const props = require("../../../../config/props.js");
+const { omdbSearch } = require("../utils/fetchResults");
 
 /* This will be where you put your controller for media
 You will probably want to organize these based on what the method is doing (POST, PUT, DELETE, GET)*/
@@ -12,28 +12,45 @@ module.exports = {
     */
     searchOMDB: async (req, res) => {
         let results = [];
+        let response;
         let search = req.query.search || "";
         let type = (req.query.type || "").toLowerCase();
         let page = req.query.page || 1;
         if (type !== "movie" && type !== "series") type = "";
 
         try {
-            results = await (await fetch(`${props.omdb}&i=${search}&type=${type}&plot=full`)).json();
+            results = await omdbSearch({
+                i: search,
+                plot: "full"
+            });
+
             if (results.Response === "True") {
                 delete results.Response;
-                return res.json({ success: true, results: [results], totalResults: 1});
+                response = { success: true, results: [results], totalResults: 1};
+                if (res) res.json(response)
+                return response;
             }
 
-            results = await (await fetch(`${props.omdb}&s=${search}&type=${type}&page=${page}`)).json();
+            results = await omdbSearch({
+                s: search,
+                type,
+                page
+            });
             if (results.Response !== "True") throw "Unable to receive a response from OMDB";
-
-            return res.json({ success: true, results: results.Search, totalResults: Number(results.totalResults) });
+            
+            response = { success: true, results: results.Search, totalResults: Number(results.totalResults) };
+            if (res) res.json(response);
+            return response;
         }
         catch(err) {
             console.error(err);
-            return res.json({ success: false, message: "Failed to search OMDB" });
+            response = { success: false, message: "Failed to search OMDB" };
+            if (res) res.json(response);
+            return response;
         }
     },
+
+
 
     // get random movies, tv shows, or both from OMDB
     /* Example parameters
@@ -42,6 +59,7 @@ module.exports = {
     */
     randomOMDB: async (req, res) => {
         let results = [];
+        let response;
         let type = (req.query.type || "").toLowerCase();
         //let genre = (req.query.genre || "").toLowerCase();
         let amount = req.query.amount || 10;
@@ -62,41 +80,56 @@ module.exports = {
 
         try {
             if (type !== "movie" && type !== "series") type = "";
+            if (amount < 0 || amount > 100) throw "Invalid amount requested";
 
-            do {
-                randomWord = getRandomWord();
-                let result = await (await fetch(`${props.omdb}&s=${randomWord}&type=${type}`)).json();
-                if (result.Response === "True") {
-                    count = Number(result.totalResults)
-                }
-            } while (!count);
-            let pages = Math.ceil(count / 10);
-            let set = new Set();
+            while (results.length < amount) {
+                do {
+                    randomWord = getRandomWord();
+                    let result = await omdbSearch({
+                        s: randomWord,
+                        type
+                    });
 
-            while (results.length < amount && set.size < pages) {
-                let page = Math.floor(Math.random() * pages) + 1;
+                    if (result.Response === "True") {
+                        count = Number(result.totalResults)
+                    }
+                } while (!count);
 
-                while (set.has(page)) {
-                    page = Math.floor(Math.random() * pages) + 1;
-                }
-                set.add(page);
-                let result = await (await fetch(`${props.omdb}&s=${randomWord}&type=${type}&page=${page}`)).json();
+                let pages = Math.ceil(count / 10);
+                let set = new Set();
 
-                if (result.Response === "True") {
-                    for (let item of result.Search) {
-                        console.log(item);
-                        if (results.length < amount) {
-                            results.push(item);
+                while (results.length < amount && set.size < pages) {
+                    let page = Math.floor(Math.random() * pages) + 1;
+
+                    while (set.has(page)) {
+                        page = Math.floor(Math.random() * pages) + 1;
+                    }
+                    set.add(page);
+
+                    let result = await omdbSearch({
+                        s: randomWord,
+                        type,
+                        page
+                    });
+
+                    if (result.Response === "True") {
+                        for (let item of result.Search) {
+                            if (results.length < amount) {
+                                results.push(item);
+                            }
                         }
-                        console.log("Here")
                     }
                 }
             }
 
-            return res.json({ success: true, results });
+            response = { success: true, results };
+            if (res) res.json(response);
+            return response;
         } catch(err) {
             console.error(err);
-            return res.json({ success: false, message: "Failed to make a random search of OMDB" });
+            response = { success: false, message: "Failed to make a random search of OMDB" };
+            if (res) res.json(response);
+            return response;
         }
     }
 }
