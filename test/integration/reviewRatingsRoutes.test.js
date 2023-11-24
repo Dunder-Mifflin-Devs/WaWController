@@ -129,6 +129,13 @@ describe("Review/Rating Routes Tests", () => {
                 ...data.exampleRating,
                 review: null
             });
+
+        let result = await Media.findOne({ imdbId: data.exampleMedia.imdbId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toMatchObject(data.exampleMedia);
     });
 
     test("if successful deleteReviewRating request is handled correctly", async () => {
@@ -177,7 +184,7 @@ describe("Review/Rating Routes Tests", () => {
             .expect(400);
     });
 
-    test("if successful getReviews request without pageSize is handled correctly", async () => {
+    test("if successful getReviews request without pageSize and page 1 is handled correctly", async () => {
         await request(app)
             .get(data.getReviewsURLPage1)
             .expect(200)
@@ -200,6 +207,16 @@ describe("Review/Rating Routes Tests", () => {
                             userId: data.exampleRating2.userId.toString()
                         },
                     ]);
+            });
+    });
+
+    test("if successful getReviews request without pageSize and page 2 is handled correctly", async () => {
+        await request(app)
+            .get(data.getReviewsURLPage2)
+            .expect(200)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ count: 2, results: [], success: true });
             });
     });
 
