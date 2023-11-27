@@ -52,7 +52,7 @@ describe("User Management Routes Tests", () => {
             .expect(201)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ msg: "Profile created" });
+                    .toEqual({ success: true, message: "Profile created" });
             });
 
         let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
@@ -90,7 +90,7 @@ describe("User Management Routes Tests", () => {
             .expect(201)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ msg: "Profile created" });
+                    .toEqual({ success: true, message: "Profile created" });
             });
         
         await request(app)
@@ -102,7 +102,7 @@ describe("User Management Routes Tests", () => {
             .expect(201)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ msg: "Profile updated successfully" });
+                    .toEqual({ success: true, message: "Profile updated successfully" });
             });
 
         let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
@@ -123,7 +123,7 @@ describe("User Management Routes Tests", () => {
             .expect(201)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ msg: "Profile created" });
+                    .toEqual({ success: true, message: "Profile created" });
             });
         
         await request(app)
@@ -148,7 +148,7 @@ describe("User Management Routes Tests", () => {
             .expect(201)
             .then(res => {
                 expect(res.body)
-                    .toEqual({ msg: "Profile created" });
+                    .toEqual({ success: true, message: "Profile created" });
             });
         
         await request(app)

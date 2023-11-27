@@ -26,6 +26,34 @@ let getProfileReq2 = {
     }
 };
 
+let postProfileReq1 = {
+    body: {
+        langPref: "English",
+        favoriteGenres: ["Horror", "Comedy"]
+    },
+    user: {
+        _id: this.userId1
+    }
+};
+
+let postProfileReq2 = {
+    body: {
+        favoriteGenres: ["Horror", "Comedy"]
+    },
+    user: {
+        _id: this.userId1
+    }
+};
+
+let putProfileReq1 = {
+    body: {
+        favoriteGenres: ["Horror", "Comedy", "Action"]
+    },
+    user: {
+        _id: this.userId1
+    }
+};
+
 let unauthorizedResponse = { error: 'Unauthorized' };
 let noProfileResponse = { error: 'Profile not found.' };
 let getProfileErrorResponse = { message: 'Error fetching profile data' };
@@ -37,6 +65,9 @@ module.exports = {
     exampleProfile2,
     getProfileReq1,
     getProfileReq2,
+    postProfileReq1,
+    postProfileReq2,
+    putProfileReq1,
     unauthorizedResponse,
     noProfileResponse,
     getProfileErrorResponse,
