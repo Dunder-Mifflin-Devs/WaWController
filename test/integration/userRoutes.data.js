@@ -24,6 +24,31 @@ let postProfileBody = {
     userFriends: []
 };
 
+let postProfileBody2 = {
+    favoriteGenres: ["Example1", "Example2"],
+    favoriteMedia: {
+        series: [],
+        episodes: [],
+        movies: []
+    },
+    watchedMedia: {
+        series: [],
+        episodes: [],
+        movies: []
+    },
+    toWatchMedia: {
+        series: [],
+        episodes: [],
+        movies: []
+    },
+    userTags: {
+        series: [],
+        episodes: [],
+        movies: []
+    },
+    userFriends: []
+};
+
 let putUserBody = {
     userName: "User 2"
 };
@@ -47,6 +72,7 @@ let exampleUsername = "User 1";
 
 module.exports = {
     postProfileBody,
+    postProfileBody2,
     validLogin,
     invalidLogin,
     putUserBody,

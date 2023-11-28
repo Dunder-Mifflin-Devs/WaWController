@@ -42,24 +42,6 @@ describe("User Management Routes Tests", () => {
             .expect(401);
     });
 
-    test("if a logged in user is able to create a profile", async () => {
-        await request(app)
-            .post("/usermgmt/profile")
-            .send({
-                ...data.validLogin,
-                ...data.postProfileBody
-            })
-            .expect(201)
-            .then(res => {
-                expect(res.body)
-                    .toEqual({ success: true, message: "Profile created" });
-            });
-
-        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
-        expect(await Profile.findOne({ userId: _id }))
-            .toMatchObject(data.postProfileBody);
-    });
-
     test("if a logged in user is able to edit a user", async () => {
         await request(app)
             .put("/usermgmt/user")
@@ -80,7 +62,86 @@ describe("User Management Routes Tests", () => {
             });
     });
 
-    test("if a logged in user is able to edit a profile", async () => {
+    test("if a logged in user can call postProfile successfully", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: true, message: "Profile created" });
+            });
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect(await Profile.findOne({ userId: _id }))
+            .toMatchObject(data.postProfileBody);
+    });
+
+    test("if postProfile calls are unsuccessful when called without necessary fields", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody2
+            })
+            .expect(400)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: false, message: "field langPref is required" });
+            });
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect((await Profile.findOne({ userId: _id })) === null)
+            .toBe(true);
+    });
+
+    test("if a postProfile call is unsuccessful when a profile already exists for the user", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: true, message: "Profile created" });
+            });
+        
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(409)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: false, message: "Profile for the user already exists" });
+            });
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect(await Profile.findOne({ userId: _id }))
+            .toMatchObject(data.postProfileBody);
+    });
+
+    test("if postProfile calls are unsuccessful when not logged in", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.postProfileBody
+            })
+            .expect(400);
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect((await Profile.findOne({ userId: _id })) === null)
+            .toBe(true);
+    });
+
+    test("if a logged in user is able to call putProfile", async () => {
         await request(app)
             .post("/usermgmt/profile")
             .send({
@@ -110,6 +171,51 @@ describe("User Management Routes Tests", () => {
             .toMatchObject({
                 ...data.postProfileBody,
                 ...data.putProfileBody
+            });
+    });
+
+    test("if a putProfile call is unsuccessful when it does not already exist", async () => {
+        await request(app)
+            .put("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.putProfileBody
+            })
+            .expect(404)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: false, message: 'Profile not found.' });
+            });
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect((await Profile.findOne({ userId: _id })) === null)
+            .toBe(true);
+    });
+
+    test("if putProfile calls fail when not logged in", async () => {
+        await request(app)
+            .post("/usermgmt/profile")
+            .send({
+                ...data.validLogin,
+                ...data.postProfileBody
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: true, message: "Profile created" });
+            });
+        
+        await request(app)
+            .put("/usermgmt/profile")
+            .send({
+                ...data.putProfileBody
+            })
+            .expect(400);
+
+        let _id = (await User.findOne({ userEmail: data.exampleEmail }))._id;
+        expect(await Profile.findOne({ userId: _id }))
+            .toMatchObject({
+                ...data.postProfileBody
             });
     });
 
