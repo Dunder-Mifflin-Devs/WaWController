@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 // Schema for Media
 const mediaSchema = new mongoose.Schema({
     // IMDB ID as a unique identifier for the media.
-    imdbId: String,
+    imdbId: { type: String, required: true},
 
     // Total ratings sum up all the ratings given to this media.
     totalRatings: { type: Number, default: 0 },
