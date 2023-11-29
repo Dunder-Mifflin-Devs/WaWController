@@ -87,34 +87,6 @@ module.exports = {
     }
   },
 
-  postAccountDelete: async (req, res) => {
-    validateRequestData(req, res, ['userId'], 'userId is required.');
-
-    const { userId } = req.body; //replace with logged in user
-
-    if (req.isAuthenticated()) {
-      res.json({ message: 'Authorized' });
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    try {
-
-      let result = await User.deleteOne({ _id: userId });
-
-      if (result.deletedCount === 0) {
-        return res.status(404).json({ msg: 'User not found.' });
-      }
-
-      await Profile.deleteOne({ userId });
-
-      res.json({ message: 'User account deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting user account:', error);
-      res.status(500).json({ msg: 'An error occurred while deleting the user account.' });
-    }
-  },
-
   /*
   oAuthPost: (req, res) => {
     passport.use(new OAuth2Strategy(
@@ -174,7 +146,42 @@ module.exports = {
     }
   },
   //DELETE logic
+  deleteUser: async (req, res) => {
+    try {
+      let result = await User.deleteOne({ _id: req.user._id });
+      if (result.deletedCount === 0) {
+        if (res) res.status(409).json({ success: false, message: "User not found"})
+        return { success: false, message: "User not found"};
+      }
 
+      await Profile.deleteOne({ userId: req.user._id });
+
+      if (res) res.status(200).json({ success: true, message: 'User account deleted successfully' });
+      return { success: true, message: 'User account deleted successfully' };
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+      if (res) res.status(500).json({ success: false, message: 'An error occurred while deleting the user account.' });
+      return { success: false, message: 'An error occurred while deleting the user account.' };
+    }
+  },
+
+  deleteProfile: async (req, res) => {
+    try {
+      let result = await Profile.deleteOne({ userId: req.user._id });
+      if (result.deletedCount === 0) {
+        if (res) res.status(409).json({ success: false, message: "No profile exists for the user" });
+        return { success: false, message: "No profile exists for the user" };
+      }
+
+      if (res) res.status(200).json({ success: true, message: "Profile deleted" });
+      return { success: true, message: "Profile deleted" };
+    }
+    catch(err) {
+      console.error(err);
+      if (res) res.status(500).json({ success: false, message: "Error while deleting profile data" });
+      return { success: false, message: "Error while deleting profile data" };
+    }
+  },
   //PUT logic
 
   putUser: async (req, res) => {

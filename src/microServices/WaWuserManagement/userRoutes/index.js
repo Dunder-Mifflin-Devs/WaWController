@@ -26,7 +26,6 @@ module.exports = (passport) => {
   router.post('/signup/email', controller.postSignup)
   router.post('/user-rating', controller.postUserRating)
   router.post('/profile', passport.authenticate("local"), controller.postProfile)
-  router.post('/account-delete', controller.postAccountDelete)// I know it's probably unneeded but I'm keeping it for now
 
 
 
@@ -34,15 +33,13 @@ module.exports = (passport) => {
   router.get('/auth', controller.oAuthGet);
 
   //DELETE routes
+  router.delete('/user', passport.authenticate("local"), controller.deleteUser)
+  router.delete('/profile', passport.authenticate("local"), controller.deleteProfile)
 
   // PUT routes
   router.put('/user-rating', controller.putUserRating);
   router.put('/user', passport.authenticate("local"), controller.putUser);
   router.put('/profile', passport.authenticate("local"), controller.putProfile);
-
-  // Update User Account Deletion (PUT is unconventional for deletions, but if needed)
-  router.put('/account-delete', controller.postAccountDelete);
-
 
   // OAuth 2.0 authentication route
 
