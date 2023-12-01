@@ -16,7 +16,7 @@ describe("User Controller Tests", () => {
     });
       
     afterEach(() => {
-        console.error.mockRestore()
+        console.error.mockRestore();
     });
     
     test("results of an unauthenticated getProfile request are formatted properly", async () => {
