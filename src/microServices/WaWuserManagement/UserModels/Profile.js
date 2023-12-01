@@ -8,7 +8,7 @@ const ProfileSchema = new mongoose.Schema({
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      //required: true,
+      required: true,
     },
     langPref: {
       type: String,

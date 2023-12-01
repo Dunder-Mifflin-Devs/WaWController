@@ -43,10 +43,20 @@ module.exports = {
   },
 
   postProfile: async (req, res) => {
-    validateRequestData(req.body, [], "[insert fields here] are required");
+    let validationRes = validateRequestData(req.body, ['langPref'], "field langPref is required");
+    if (validationRes) {
+      if (res) res.status(400).json({success: false, message: validationRes.error});
+      return {success: false, message: validationRes.error};
+    }
 
     try {
-      const profile = new Profile({
+      let existingProfile = await Profile.findOne({ userId: req.user._id })
+      if (existingProfile) {
+        if (res) res.status(409).json({ success: false, message: "Profile for the user already exists" })
+        return { success: false, message: "Profile for the user already exists" };
+      }
+  
+      await Profile.create({
         _id: new mongoose.Types.ObjectId(),
         userId: req.user._id,
         langPref: req.body.langPref,
@@ -57,26 +67,13 @@ module.exports = {
         userTags: req.body.userTags,
         userFriends: req.body.userFriends
       });
-  
-      let existingProfile = await Profile.findOne({ userId: req.body.userid })
-      if (existingProfile) {
-        /*
-        req.flash("errors", {
-          msg: "Profile for the user already exists",
-        });
-        */
-        if (res) res.status(409).send({ msg: "Profile for the user already exists" })
-        return { msg: "Profile for the user already exists" };
-      }
-  
-      await profile.save();
-      if (res) res.status(201).send({ msg: "Profile created" })
-      return { msg: "Profile created" };
+      if (res) res.status(201).json({ success: true, message: "Profile created" })
+      return { success: true, message: "Profile created" };
     }
     catch(err) {
       console.error(err);
-      if (res) res.status(400).send({ msg: "Failed to create profile" })
-      return { msg: "Failed to create profile" };
+      if (res) res.status(400).json({ success: false, message: "Failed to create profile" })
+      return { success: false, message: "Failed to create profile" };
     }
   },
 
@@ -87,34 +84,6 @@ module.exports = {
       res.json({ message: 'Authorized' });
     } else {
       res.status(401).json({ error: 'Unauthorized' });
-    }
-  },
-
-  postAccountDelete: async (req, res) => {
-    validateRequestData(req, res, ['userId'], 'userId is required.');
-
-    const { userId } = req.body; //replace with logged in user
-
-    if (req.isAuthenticated()) {
-      res.json({ message: 'Authorized' });
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    try {
-
-      let result = await User.deleteOne({ _id: userId });
-
-      if (result.deletedCount === 0) {
-        return res.status(404).json({ msg: 'User not found.' });
-      }
-
-      await Profile.deleteOne({ userId });
-
-      res.json({ message: 'User account deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting user account:', error);
-      res.status(500).json({ msg: 'An error occurred while deleting the user account.' });
     }
   },
 
@@ -154,15 +123,65 @@ module.exports = {
     });
   },
 
-  getProfile: (req, res) => {
-    if (req.isAuthenticated()) {
-      res.json({ message: 'Welcome to the Profile Page' });
-    } else {
-      res.status(401).json({ error: 'Unauthorized' });
+  getProfile: async (req, res) => {
+    if (!req.isAuthenticated()) {
+      if (res) res.status(401).json({ error: 'Unauthorized' });
+      return { error: 'Unauthorized' };
+    }
+
+    try {
+      const profile = await Profile.findOne({ userId: req.user._id });
+      if (!profile) {
+        if (res) res.status(404).json({ error: 'Profile not found.' })
+        return { error: 'Profile not found.' };
+      }
+
+      if (res) res.json(profile)
+      return profile;
+    } catch (err) {
+      console.error(err);
+      
+      if (res) res.status(500).send({ message: 'Error fetching profile data' })
+      return { message: 'Error fetching profile data' };
     }
   },
   //DELETE logic
+  deleteUser: async (req, res) => {
+    try {
+      let result = await User.deleteOne({ _id: req.user._id });
+      if (result.deletedCount === 0) {
+        if (res) res.status(409).json({ success: false, message: "User not found"})
+        return { success: false, message: "User not found"};
+      }
 
+      await Profile.deleteOne({ userId: req.user._id });
+
+      if (res) res.status(200).json({ success: true, message: 'User account deleted successfully' });
+      return { success: true, message: 'User account deleted successfully' };
+    } catch (error) {
+      console.error('Error deleting user account:', error);
+      if (res) res.status(500).json({ success: false, message: 'An error occurred while deleting the user account.' });
+      return { success: false, message: 'An error occurred while deleting the user account.' };
+    }
+  },
+
+  deleteProfile: async (req, res) => {
+    try {
+      let result = await Profile.deleteOne({ userId: req.user._id });
+      if (result.deletedCount === 0) {
+        if (res) res.status(409).json({ success: false, message: "No profile exists for the user" });
+        return { success: false, message: "No profile exists for the user" };
+      }
+
+      if (res) res.status(200).json({ success: true, message: "Profile deleted" });
+      return { success: true, message: "Profile deleted" };
+    }
+    catch(err) {
+      console.error(err);
+      if (res) res.status(500).json({ success: false, message: "Error while deleting profile data" });
+      return { success: false, message: "Error while deleting profile data" };
+    }
+  },
   //PUT logic
 
   putUser: async (req, res) => {
@@ -197,18 +216,18 @@ module.exports = {
       let result = await Profile.updateOne({ userId: req.user._id }, req.body);
 
       if (result.matchedCount === 0) {
-        if (res) res.status(404).json({ error: 'Profile not found.' });
-        return { error: 'Profile not found.' };
+        if (res) res.status(404).json({ success: false, message: 'Profile not found.' });
+        return { success: false, message: 'Profile not found.' };
       }
 
-      if (res) res.status(201).json({ msg: "Profile updated successfully" });
-      return { msg: "Profile updated successfully" };
+      if (res) res.status(201).json({ success: true, message: "Profile updated successfully" });
+      return { success: true, message: "Profile updated successfully" };
 
     }
     catch(err) {
       console.error(err);
-      if (res) res.status(400).send({ msg: "Failed to update profile" });
-      return { msg: "Failed to update profile" };
+      if (res) res.status(400).send({ success: false, message: "Failed to update profile" });
+      return { success: false, message: "Failed to update profile" };
     }
   },
 

@@ -185,7 +185,6 @@ let omdbIdExpected = {
             "Ratings":[{"Source":"Internet Movie Database","Value":"8.7/10"},{"Source":"Rotten Tomatoes","Value":"83%"},{"Source":"Metacritic","Value":"73/100"}],
             "Metascore":"73",
             "imdbRating":"8.7",
-            "imdbVotes":"1,999,515",
             "imdbID":"tt0133093",
             "Type":"movie",
             "DVD":"01 Jan 2009",

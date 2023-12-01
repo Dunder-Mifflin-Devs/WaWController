@@ -12,11 +12,15 @@ module.exports = (passport) => {
     router.post('/:mediaId/review/:review', passport.authenticate("local"), rController.postReview) //review text
 
     // GET routes
+    router.get("/:mediaId/rating", rController.getAverageRating);
+    router.get("/:mediaId/:page", rController.getReviews);
+    router.get("/:mediaId", passport.authenticate("local"), rController.getReviewRating);
 
     // DELETE routes
+    router.delete("/:mediaId", passport.authenticate("local"), rController.deleteReviewRating);
 
     // PUT routes
-    router.put("/:id", passport.authenticate("local"), rController.putRating); // update review/rating
+    router.put("/:mediaId", passport.authenticate("local"), rController.putReviewRating); // update review/rating
 
     return router;
 }

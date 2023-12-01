@@ -28,4 +28,4 @@ const ratingReviewSchema = new mongoose.Schema({
     }
 }); 
 
-module.exports = mongoose.model('Ratings', ratingReviewSchema, 'review-ratings'); // (ModelName, SchemaName, MongoDB collection name)
+module.exports = mongoose.model('ReviewRating', ratingReviewSchema, 'review-rating'); // (ModelName, SchemaName, MongoDB collection name)
