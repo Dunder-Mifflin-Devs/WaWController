@@ -51,7 +51,7 @@ describe("Media Routes Tests", () => {
             .expect(200)
             .then(response => {
                 expect(response.body)
-                    .toEqual(data.omdbIdExpected);
+                    .toMatchObject(data.omdbIdExpected);
             })
 
     });

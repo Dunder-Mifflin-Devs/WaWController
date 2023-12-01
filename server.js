@@ -104,4 +104,7 @@ app.get('/google/callback',
 module.exports = app.listen(props.port, () => {
   console.log(`Running in a ${props.env} environment`);
   console.log(`Server is running in port ${props.port}.`);
+
+  if (props.env === "test") console.error = () => {};
+  if (props.env === "production") console.log = () => {};
 });
