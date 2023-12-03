@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-const port = process.env.PORT || 3001;
 const props = require("./config/props");
 const mongoose = require("mongoose");
 const passport = require("passport");
@@ -9,12 +8,12 @@ const MongoStore = require("connect-mongo");
 const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
-const connectDB = require("./config/database");
+const { connectDB, run } = require("./config/database");
 require("dotenv").config({ path: "./config/.env" });
 
 //Create Database
 if (props.dbUrl.includes('localhost') || props.dbUrl.includes('127.0.0.1')) {
-  require("./dev-mongo").run();
+  run(Number(process.env.MOCK_DB_PORT));
 }
 
 //Connect To Database
@@ -58,6 +57,10 @@ process.env.AUTHORIZATION_URL && require('./config/passport-oauth2')(passport, '
 //Use flash messages for errors, info, etc...
 app.use(flash());
 
+//middleware routes
+const middleware = require("./src/middleware/middleware");
+//app.use(middleware.logger);
+
 //microservice routes
 const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
 app.use("/usermgmt", userMgmtRoutes);
@@ -67,6 +70,9 @@ app.use("/search", searchRoutes);
 
 const mediaRoutes = require("./src/microServices/MediaService/mediaRoutes/mediaRoutes")(passport);
 app.use("/media", mediaRoutes);
+
+const reviewRatingsRoutes = require("./src/microServices/ReviewRatingsService/reviewRatingsRoutes/reviewRatingsRoutes")(passport);
+app.use("/reviews", reviewRatingsRoutes);
 
 
 app.get("/loginOauth", passport.authenticate("oauth2", {
@@ -96,7 +102,10 @@ app.get('/google/callback',
 
 
 // And... start it up!
-module.exports = app.listen(port, () => {
+module.exports = app.listen(props.port, () => {
   console.log(`Running in a ${props.env} environment`);
-  console.log(`Server is running in port ${port}.`);
+  console.log(`Server is running in port ${props.port}.`);
+
+  if (props.env === "test") console.error = () => {};
+  if (props.env === "production") console.log = () => {};
 });
