@@ -1,28 +1,29 @@
 const passport = require("passport");
+const express = require("express")
 const validator = require("validator");
-const User = require("../models/User");
+const User = require("../../WaWuserManagement/UserModels/User");
 const httpErrors = require('http-errors');
-const session=require("express-session")
+const session = require("express-session")
 
 
 module.exports = {
-    auth: function(req,res,next){
+    auth: (req, res) => {
 
         },
     //if the user is authenticated, then they will be successfully logged out and the session destroyed
-    logout: function(req,res,next){
+    logout: (req, res) => {
+      
       if(req.isAuthenticated()){
-        req.logout(()=>{
-            console.log('User has logged out')
-            req.session.destroy(()=>{
-              console.log('Session successfully destroyed')
-              res.status(200).redirect('/')
-            })
-        })
-      }else{
-        console.log("Error : Failed to destroy the session during logout.", err);
-        res.status(205).redirect("/profile");
-        }}
+        try {
+          req.session.destroy();
+          res.status(200);
+        } catch (err) { 
+          res.status(503);
+        }
+      } else {
+        res.status(400);
+        }
+      }
 }
         
  

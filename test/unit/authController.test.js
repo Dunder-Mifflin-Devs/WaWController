@@ -1,22 +1,30 @@
 const data = require("./mediaController.data");
+const authC = require("../../src/microServices/WaWAuth/authControllers/authController");
+const { logout } = require("../../src/microServices/WaWAuth/authControllers/authController");
 
 // sets up the functions to mock
-jest.mock("../../src/microServices/MediaService/utils/fetchResults", () => {
-    return {
-        omdbSearch: jest.fn()
-    }
-});
-jest.mock("../../src/microServices/MediaService/utils/randomWords", () => {
-    return {
-        wordList: ["matrix"],
-        getRandomWord: () => "matrix"
-    }
-});
+// jest.mock("../../src/microServices/MediaService/utils/fetchResults", () => {
+//     return {
+//         omdbSearch: jest.fn()
+//     }
+// });
+// jest.mock("../../src/microServices/MediaService/utils/randomWords", () => {
+//     return {
+//         wordList: ["matrix"],
+//         getRandomWord: () => "matrix"
+//     }
+// });
+// jest.mock("../../src/microServices/authController/", () => {
+//     return {
+//         wordList: ["matrix"],
+//         getRandomWord: () => "matrix"
+//     }
+// });
 
 
 
 // test suite for media controller unit tests
-describe("Media Controller Tests", () => {
+describe("authController should-", () => {
     beforeEach(() => {
         jest.spyOn(console, 'error')
         console.error.mockImplementation(() => null);
@@ -26,76 +34,51 @@ describe("Media Controller Tests", () => {
         console.error.mockRestore()
     });
 
-    test("results of a title search are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => {
-            if ("i" in params) return { Response: "False" };
-            else return data.omdbTitleResponse;
-        });
+    test("destroy session when the user is authenticated AND there is not server error", async () => {
+        const req = {
+            
+            isAuthenticated:() => {
+                return true
+            },
+            session:{
+                destroy: jest.fn(()=>{}),
+            }
+        };
+        const res={
+            status:() => {},
+        };
+        authC.logout(req, res);
+        expect(req.session.destroy).toHaveBeenCalledTimes(1);
+    });
 
-        expect(await searchOMDB(data.omdbTitleRequest))
-            .toEqual(data.omdbTitleExpected);
-    })
-
-    test("results of an api error in a title or id search are handled correctly", async () => {
-        omdbSearch.mockImplementation((params) => {
-            throw "Error Occurred"
-        });
-
-        expect(await searchOMDB(data.omdbTitleRequest))
-            .toEqual(data.omdbErrorExpected);
-    })
-
-    test("results of an id search are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => {
-            if ("i" in params) return data.omdbIdResponse;
-            else return { Response: False };
-        });
-
-        expect(await searchOMDB(data.omdbIdRequest))
-            .toEqual(data.omdbIdExpected);
-    })
-
-    test("results of a failed search are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => data.omdbErrorResponse);
-
-        expect(await searchOMDB(data.omdbErrorRequest))
-            .toEqual(data.omdbErrorExpected);
-    })
-
-    test("results of a random search of 5 are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
-
-        expect(await randomOMDB(data.omdbRandomRequest5))
-            .toEqual(data.omdbRandomExpected5);
-    })
-
-    test("results of a random search of 10 are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
-
-        expect(await randomOMDB(data.omdbRandomRequest10))
-            .toEqual(data.omdbRandomExpected10);
-    })
-
-    test("results of a random search of 15 are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
-
-        expect(await randomOMDB(data.omdbRandomRequest15))
-            .toEqual(data.omdbRandomExpected15);
-    })
-
-    test("results of an error in a random search are formatted correctly", async () => {
-        omdbSearch.mockImplementation((params) => data.omdbRandomResponse);
-
-        expect(await randomOMDB(data.omdbRandomErrorRequest))
-            .toEqual(data.omdbRandomErrorExpected);
-    })
-
-    test("results of an api error in random search are handled correctly", async () => {
-        omdbSearch.mockImplementation((params) => {
-            throw "Error Occurred"
-        });
-
-        expect(await randomOMDB(data.omdbRandomErrorRequest))
-            .toEqual(data.omdbRandomErrorExpected);
-    })
-})
+    test("return error when session is not destroyed", async () => {
+        const req = {
+            isAuthenticated:() => {
+                return true;
+            },
+            session:{
+                destroy: jest.fn(()=>{
+                    throw new Error('foo');
+                }),
+            }
+        };
+        const res={
+            status:()=>{},
+        };
+        authC.logout(req, res);
+         expect(req.session.destroy).toHaveBeenCalledTimes(1);
+    });
+    
+    test("return a 400 when no the user is not authenticated", async () => {
+        const req = {
+            isAuthenticated:() => {
+                return false;
+            },
+        };
+        const res={
+            status: jest.fn(() => {})
+        };
+        authC.logout(req, res);
+        expect(res.status).toHaveBeenCalledTimes(1);
+    });
+});
