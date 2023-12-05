@@ -50,6 +50,14 @@ module.exports = {
                 return { success: false, message: 'Review/rating not found' };
             }
 
+            if (!(await Media.findOne({ imdbId: req.params.mediaId }))) {
+                await Media.create({
+                    imdbId: req.params.mediaId,
+                    totalRatings: 0,
+                    numberOfRatings: 0
+                });
+            }
+
             if (oldReviewRating.rating) {
                 await Media.updateOne({ imdbId: req.params.mediaId }, {
                     $inc: {

@@ -22,7 +22,8 @@ jest.mock("../../src/microServices/ReviewRatingsService/reviewRatingsModels/revi
 jest.mock("../../src/microServices/MediaService/mediaModels/mediaModels", () => {
     return {
         findOne: jest.fn(),
-        updateOne: jest.fn()
+        updateOne: jest.fn(),
+        create: jest.fn()
     }
 });
 
@@ -51,6 +52,9 @@ describe("Review/Rating Controller Tests", () => {
                 matchedCount: 1
             }
         });
+        Media.create.mockImplementation((dbCallBody) => {
+            return null
+        });
 
         expect(await putReviewRating(data.examplePutRatingRequest))
             .toEqual({ success: true, message: "Updated rating/review" });
@@ -70,6 +74,11 @@ describe("Review/Rating Controller Tests", () => {
                 matchedCount: 0
             }
         });
+        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+            return {
+                matchedCount: 1
+            }
+        });
 
         expect(await putReviewRating(data.examplePutRatingRequest))
             .toEqual({ success: false, message: 'Review/rating not found' });
@@ -81,6 +90,11 @@ describe("Review/Rating Controller Tests", () => {
         });
         Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
             throw "Example Error";
+        });
+        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+            return {
+                matchedCount: 1
+            }
         });
         Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
             return {

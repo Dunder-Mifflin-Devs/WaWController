@@ -5,6 +5,8 @@ let exampleRatingId = new mongoose.Types.ObjectId();
 
 let exampleRating2Id = new mongoose.Types.ObjectId();
 
+let exampleRating3Id = new mongoose.Types.ObjectId();
+
 let exampleUserId = new mongoose.Types.ObjectId();
 
 let exampleUser2Id = new mongoose.Types.ObjectId();
@@ -63,6 +65,13 @@ let exampleRating2 = {
     review: "example2"
 }
 
+let exampleRating3 = {
+    _id: exampleRating3Id,
+    userId: exampleUserId,
+    mediaId: "tt0133095",
+    review: "example3"
+}
+
 let exampleMedia = {
     imdbId: "tt0133093",
     totalRatings: 8,
@@ -78,6 +87,7 @@ let exampleRatingUpdate2 = {
 }
 
 let putRatingTestURL = "/reviews/tt0133093";
+let putRatingTestURL2 = "/reviews/tt0133095";
 let getReviewRatingURL = "/reviews/tt0133093";
 let deleteReviewRatingURL = "/reviews/tt0133093";
 let getReviewsURLPage1 = "/reviews/tt0133093/1";
@@ -90,8 +100,10 @@ let getAverageRatingURLId2 = "/reviews/tt0133094/rating";
 module.exports = {
     exampleRatingId,
     exampleRating2Id,
+    exampleRating3Id,
     exampleRating,
     exampleRating2,
+    exampleRating3,
     exampleRatingUpdate,
     exampleRatingUpdate2,
     exampleUser,
@@ -102,6 +114,7 @@ module.exports = {
     exampleUser3Login,
     exampleMedia,
     putRatingTestURL,
+    putRatingTestURL2,
     getReviewRatingURL,
     deleteReviewRatingURL,
     getReviewsURLPage1,

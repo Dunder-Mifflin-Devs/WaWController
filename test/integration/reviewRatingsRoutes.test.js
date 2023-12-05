@@ -15,6 +15,7 @@ describe("Review/Rating Routes Tests", () => {
         await user.create(data.exampleUser3);
         await reviewRating.create(data.exampleRating);
         await reviewRating.create(data.exampleRating2);
+        await reviewRating.create(data.exampleRating3);
         await Media.create(data.exampleMedia);
     });
     afterEach(async () => await clearDB());
@@ -48,6 +49,37 @@ describe("Review/Rating Routes Tests", () => {
             imdbId: data.exampleMedia.imdbId,
             totalRatings: data.exampleRatingUpdate.rating + data.exampleRating2.rating,
             numberOfRatings: data.exampleMedia.numberOfRatings
+        });
+    });
+
+    test("if a successful putReviewRating request when missing a media model is handled correctly", async () => {
+        await request(app)
+            .put(data.putRatingTestURL2)
+            .send({
+                ...data.exampleUserLogin,
+                ...data.exampleRatingUpdate
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: true, message: "Updated rating/review" })
+            });
+        
+        expect(await reviewRating.findById(data.exampleRating3Id))
+            .toMatchObject({
+                ...data.exampleRating3,
+                ...data.exampleRatingUpdate
+            });
+
+        let result = await Media.findOne({ imdbId: data.exampleRating3.mediaId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual({
+            imdbId: data.exampleRating3.mediaId,
+            totalRatings: data.exampleRatingUpdate.rating,
+            numberOfRatings: 1
         });
     });
 
