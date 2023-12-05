@@ -42,11 +42,29 @@ module.exports = {
                 timestamp: Date.now()
             };
 
+            let oldReviewRating = await Rating.findOne(dbCallBody);
             let result = await Rating.updateOne(dbCallBody, dbUpdate, { runValidators: true });
 
             if (result.matchedCount === 0) {
                 if (res) res.status(404).json({ success: false, message: 'Review/rating not found' });
                 return { success: false, message: 'Review/rating not found' };
+            }
+
+            if (oldReviewRating.rating) {
+                await Media.updateOne({ imdbId: req.params.mediaId }, {
+                    $inc: {
+                        totalRatings: -oldReviewRating.rating,
+                        numberOfRatings: -1
+                    }
+                });
+            }
+            if (dbUpdate.rating) {
+                await Media.updateOne({ imdbId: req.params.mediaId }, {
+                    $inc: {
+                        totalRatings: dbUpdate.rating,
+                        numberOfRatings: 1
+                    }
+                });
             }
 
             if (res) res.status(201).json({ success: true, message: "Updated rating/review" });

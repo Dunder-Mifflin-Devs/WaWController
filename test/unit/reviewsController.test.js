@@ -37,8 +37,16 @@ describe("Review/Rating Controller Tests", () => {
         console.error.mockRestore()
     });
 
-    test("results of a valid rating update are formatted correctly", async () => {
+    test("results of a valid putReviewRating request are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+            return data.exampleRating
+        });
         Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+            return {
+                matchedCount: 1
+            }
+        });
+        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
             return {
                 matchedCount: 1
             }
@@ -48,8 +56,16 @@ describe("Review/Rating Controller Tests", () => {
             .toEqual({ success: true, message: "Updated rating/review" });
     });
 
-    test("results of updating nonexistant rating are formatted correctly", async () => {
+    test("results of a putReviewRrating request without an existing reviewRating are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+            return null
+        });
         Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+            return {
+                matchedCount: 0
+            }
+        });
+        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
             return {
                 matchedCount: 0
             }
@@ -59,9 +75,17 @@ describe("Review/Rating Controller Tests", () => {
             .toEqual({ success: false, message: 'Review/rating not found' });
     });
 
-    test("results of an invalid rating update are formatted correctly", async () => {
+    test("results of an invalid putReviewRating request are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+            return data.exampleRating
+        });
         Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
             throw "Example Error";
+        });
+        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+            return {
+                matchedCount: 1
+            }
         });
 
         expect(await putReviewRating(data.examplePutRatingRequest))
