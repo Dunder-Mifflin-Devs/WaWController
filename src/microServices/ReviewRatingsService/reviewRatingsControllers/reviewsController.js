@@ -1,27 +1,69 @@
-const createError= require('http-errors');
+const createError = require("http-errors");
 const Rating = require("../reviewRatingsModels/reviewRatingsModels");
 const Media = require("../../MediaService/mediaModels/mediaModels");
 
 // Reviews Controller for fetching and posting to database
 module.exports = {
-    postRating: async (req, res) => {
-        //logic to post a rating goes here
-        const dbCallBody= {
-            rating: req.params.rating,
-            id: req.params.id
-        }
-        //verifyDbResponseSendStatus(req, res, dbCallBody)
-    }, 
+  postRating: async (req, res) => {
+    //grab the media, the user, and the rating
 
-    postReview: async (req, res) => {
-        //logic to post a review goes here
-        const dbCallBody = {
-            id: req.params.id,
-            review: req.body.review,
-        }
+    const dbCallBody = {
+      rating: req.params.rating,
+      mediaId: req.params.id,
+      userId: req.user._id,
+    };
+    let existingRating = await Rating.findOne({
+      mediaId: dbCallBody.mediaId,
+      userId: dbCallBody.userId,
+    });
+    // CHECK IF ONE DOCUMENT EXISTS
+    if (existingRating) {
+      this.putRating(req, res);
+    }
+    // MAKE A NEW RATING IF NO RATING OR REVIEW EXISTS
+    else {
+      const userRating = new Rating({
+        _id: new mongoose.Types.ObjectId(),
+        userId: dbCallBody.userId,
+        mediaId: dbCallBody.mediaId,
+        rating: dbCallBody.rating,
+      });
+      // Save that puppy if nonexistent
+      await userRating.save();
+      res.status(201).json({ success: true, message: "User rating added" });
+      return { success: true, message: "User rating added" };
+    }
 
-        //verifyDbResponseSendStatus(req, res, dbCallBody)
-    },
+    //verifyDbResponseSendStatus(req, res, dbCallBody)
+  },
+
+  postReview: async (req, res) => {
+    const dbCallBody = {
+      review: req.params.review,
+      mediaId: req.params.id,
+      userId: req.user._id,
+    };
+    let existingReview = await Rating.findOne({
+      mediaId: dbCallBody.mediaId,
+      userId: dbCallBody.userId,
+    });
+    // CHECK IF ONE DOCUMENT EXISTS
+    if (existingReview) {
+      this.putRating(req, res);
+    }
+    // MAKE A NEW RATING IF NO RATING OR REVIEW EXISTS
+    const userReview = new Rating({
+      _id: new mongoose.Types.ObjectId(),
+      userId: dbCallBody.userId,
+      mediaId: dbCallBody.mediaId,
+      review: dbCallBody.review,
+    });
+    // Save that puppy
+    await userReview.save();
+    res.status(201).json({ success: true, message: "User rating added" });
+    return { success: true, message: "User rating added" };
+    //verifyDbResponseSendStatus(req, res, dbCallBody)
+  },
 
     /*
     Updates a review and/or rating for a media by the logged in user
@@ -36,11 +78,11 @@ module.exports = {
                 userId: req.user._id
             };
 
-            const dbUpdate = {
-                rating: req.body.rating || undefined,
-                review: req.body.review || undefined,
-                timestamp: Date.now()
-            };
+      const dbUpdate = {
+        rating: req.body.rating || undefined,
+        review: req.body.review || undefined,
+        timestamp: Date.now(),
+      };
 
             let oldReviewRating = await Rating.findOne(dbCallBody);
             let result = await Rating.updateOne(dbCallBody, dbUpdate, { runValidators: true });
@@ -232,7 +274,8 @@ module.exports = {
             return { success: false, message: "Failed to get average rating" };
         }
     }
-}
+  },
+};
 
 //TODO: not 100% sure this will work
 /*
@@ -243,7 +286,6 @@ const verifyDbResponseSendStatus = async(req, res, body) => {
 }
 */
 
-   // TODO: if user opens a media property to rate or review, create document(s) for that.
+// TODO: if user opens a media property to rate or review, create document(s) for that.
 
-    // TODO: if user opens a media property to rate or review, but does not do so, ensure that no empty document stagnates in the database.
-
+// TODO: if user opens a media property to rate or review, but does not do so, ensure that no empty document stagnates in the database.
