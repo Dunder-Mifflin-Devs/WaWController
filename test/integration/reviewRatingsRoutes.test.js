@@ -15,12 +15,13 @@ describe("Review/Rating Routes Tests", () => {
         await user.create(data.exampleUser3);
         await reviewRating.create(data.exampleRating);
         await reviewRating.create(data.exampleRating2);
+        await reviewRating.create(data.exampleRating3);
         await Media.create(data.exampleMedia);
     });
     afterEach(async () => await clearDB());
     afterAll(async () => await closeDB());
 
-    test("if review/rating is updated", async () => {
+    test("if while logged in a successful putReviewRating request is handled correctly", async () => {
         await request(app)
             .put(data.putRatingTestURL)
             .send({
@@ -38,9 +39,51 @@ describe("Review/Rating Routes Tests", () => {
                 ...data.exampleRating,
                 ...data.exampleRatingUpdate
             });
+
+        let result = await Media.findOne({ imdbId: data.exampleMedia.imdbId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual({
+            imdbId: data.exampleMedia.imdbId,
+            totalRatings: data.exampleRatingUpdate.rating + data.exampleRating2.rating,
+            numberOfRatings: data.exampleMedia.numberOfRatings
+        });
     });
 
-    test("if non-existant review/rating is not updated", async () => {
+    test("if a successful putReviewRating request when missing a media model is handled correctly", async () => {
+        await request(app)
+            .put(data.putRatingTestURL2)
+            .send({
+                ...data.exampleUserLogin,
+                ...data.exampleRatingUpdate
+            })
+            .expect(201)
+            .then(res => {
+                expect(res.body)
+                    .toEqual({ success: true, message: "Updated rating/review" })
+            });
+        
+        expect(await reviewRating.findById(data.exampleRating3Id))
+            .toMatchObject({
+                ...data.exampleRating3,
+                ...data.exampleRatingUpdate
+            });
+
+        let result = await Media.findOne({ imdbId: data.exampleRating3.mediaId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual({
+            imdbId: data.exampleRating3.mediaId,
+            totalRatings: data.exampleRatingUpdate.rating,
+            numberOfRatings: 1
+        });
+    });
+
+    test("if a putReviewRating request without an existing review/rating is handled correctly", async () => {
         await request(app)
             .put(data.putRatingTestURL)
             .send({
@@ -52,9 +95,16 @@ describe("Review/Rating Routes Tests", () => {
                 expect(res.body)
                     .toEqual({ success: false, message: 'Review/rating not found' })
             });
+
+        let result = await Media.findOne({ imdbId: data.exampleMedia.imdbId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual(data.exampleMedia);
     });
 
-    test("if updating of invalid review/rating is handled correctly", async () => {
+    test("if a putReviewRating request with invalid data is handled correctly", async () => {
         await request(app)
             .put(data.putRatingTestURL)
             .send({
@@ -69,12 +119,33 @@ describe("Review/Rating Routes Tests", () => {
         
         expect(await reviewRating.findById(data.exampleRatingId))
             .toMatchObject({ rating: data.exampleRating.rating });
+        
+        let result = await Media.findOne({ imdbId: data.exampleMedia.imdbId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual(data.exampleMedia);
     });
 
     test("if putReviewRating request while not logged in is handled corerctly", async () => {
         await request(app)
             .delete(data.putRatingTestURL)
             .expect(400);
+
+        expect(await reviewRating.findById(data.exampleRatingId))
+            .toMatchObject({
+                mediaId: data.exampleRating.mediaId,
+                rating: data.exampleRating.rating,
+                review: data.exampleRating.review
+            });
+            
+        let result = await Media.findOne({ imdbId: data.exampleMedia.imdbId });
+        expect({
+            imdbId: result.imdbId,
+            numberOfRatings: result.numberOfRatings,
+            totalRatings: result.totalRatings
+        }).toEqual(data.exampleMedia);
     });
 
     test("if successful getReviewRatingRequest is handled correctly", async () => {
