@@ -1,3 +1,23 @@
+let examplePostRatingRequest = {
+    params: {
+        mediaId: "example",
+        rating: 5
+    },
+    user: {
+        _id: "example"
+    }
+}
+
+let examplePostReviewRequest = {
+    params: {
+        mediaId: "example",
+        review: "example"
+    },
+    user: {
+        _id: "example"
+    }
+}
+
 let examplePutRatingRequest = {
     params: {
         mediaId: "example"
@@ -84,6 +104,8 @@ let exampleDeleteRatingRequest = {
 
 
 module.exports = {
+    examplePostRatingRequest,
+    examplePostReviewRequest,
     examplePutRatingRequest,
     exampleGetRatingRequest,
     exampleGetReviewsRequest,

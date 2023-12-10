@@ -1,5 +1,7 @@
 const data = require("./reviewsController.data");
 const {
+    postRating,
+    postReview,
     putReviewRating,
     getReviewRating,
     getReviews,
@@ -16,7 +18,8 @@ jest.mock("../../src/microServices/ReviewRatingsService/reviewRatingsModels/revi
         findOne: jest.fn(),
         updateOne: jest.fn(),
         countDocuments: jest.fn(),
-        deleteOne: jest.fn()
+        deleteOne: jest.fn(),
+        create: jest.fn()
     }
 });
 jest.mock("../../src/microServices/MediaService/mediaModels/mediaModels", () => {
@@ -36,6 +39,111 @@ describe("Review/Rating Controller Tests", () => {
       
     afterEach(() => {
         console.error.mockRestore()
+    });
+
+    test("results of a valid postRating request are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Media.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Media.updateOne.mockImplementation((dbCallBody) => {
+            return {
+                matchedCount: 1
+            }
+        });
+        Media.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+
+        expect(await postRating(data.examplePostRatingRequest))
+            .toEqual({ success: true, message: "User rating added" });
+    });
+
+    test("results of a postRating request when rating/review exists are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return data.exampleRating
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Media.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Media.updateOne.mockImplementation((dbCallBody) => {
+            return {
+                matchedCount: 1
+            }
+        });
+        Media.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+
+        expect(await postRating(data.examplePostRatingRequest))
+            .toEqual({ success: false, message: 'Review/rating already exists' });
+    });
+
+    test("results of a postRating request that causes an error are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            throw "Example error"
+        });
+        Media.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Media.updateOne.mockImplementation((dbCallBody) => {
+            return {
+                matchedCount: 1
+            }
+        });
+        Media.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+
+        expect(await postRating(data.examplePostRatingRequest))
+            .toEqual({ success: false, message: "Unable to add user rating" });
+    });
+
+    test("results of a valid postReview request are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+
+        expect(await postReview(data.examplePostReviewRequest))
+            .toEqual({ success: true, message: "User review added" });
+    });
+
+    test("results of a postReview request when rating/review exists are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return data.exampleRating
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            return null
+        });
+
+        expect(await postReview(data.examplePostReviewRequest))
+            .toEqual({ success: false, message: 'Review/rating already exists' });
+    });
+
+    test("results of a postReview request that causes an error are formatted correctly", async () => {
+        Rating.findOne.mockImplementation((dbCallBody) => {
+            return null
+        });
+        Rating.create.mockImplementation((dbCallBody) => {
+            throw "Example error"
+        });
+
+        expect(await postReview(data.examplePostReviewRequest))
+            .toEqual({ success: false, message: "Unable to add user review" });
     });
 
     test("results of a valid putReviewRating request are formatted correctly", async () => {

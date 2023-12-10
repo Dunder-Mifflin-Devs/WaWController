@@ -86,6 +86,11 @@ let exampleRatingUpdate2 = {
     rating: 6
 }
 
+let exampleReviewUpdate = {
+    review: "example review update"
+}
+
+let postRatingTestURL = "/reviews/tt0133093";
 let putRatingTestURL = "/reviews/tt0133093";
 let putRatingTestURL2 = "/reviews/tt0133095";
 let getReviewRatingURL = "/reviews/tt0133093";
@@ -106,6 +111,7 @@ module.exports = {
     exampleRating3,
     exampleRatingUpdate,
     exampleRatingUpdate2,
+    exampleReviewUpdate,
     exampleUser,
     exampleUser2,
     exampleUser3,
@@ -113,6 +119,7 @@ module.exports = {
     exampleUser2Login,
     exampleUser3Login,
     exampleMedia,
+    postRatingTestURL,
     putRatingTestURL,
     putRatingTestURL2,
     getReviewRatingURL,
