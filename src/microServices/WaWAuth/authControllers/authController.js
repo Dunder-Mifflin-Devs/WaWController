@@ -8,7 +8,6 @@ const session = require("express-session")
 
 module.exports = {
     auth: (req, res) => {
-
         },
     logout: (req, res) => {
       
@@ -24,9 +23,3 @@ module.exports = {
         }
       }
 }
-        
- 
-
-
-    
-
