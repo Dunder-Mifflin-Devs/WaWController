@@ -10,7 +10,6 @@ module.exports = {
     auth: (req, res) => {
 
         },
-    //if the user is authenticated, then they will be successfully logged out and the session destroyed
     logout: (req, res) => {
       
       if(req.isAuthenticated()){
