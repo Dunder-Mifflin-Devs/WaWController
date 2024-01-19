@@ -12,11 +12,10 @@ const { connectDB, run } = require("./config/database");
 require("dotenv").config({ path: "./config/.env" });
 
 //Create Database
-if (props.dbUrl.includes('localhost') || props.dbUrl.includes('127.0.0.1')) {
+if (props.dbUrl.includes("localhost") || props.dbUrl.includes("127.0.0.1")) {
   run(Number(process.env.MOCK_DB_PORT));
 }
 
-//Connect To Database
 connectDB();
 
 //Body Parsing
@@ -51,10 +50,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport config
-require("./config/passport-local")(passport, 'local');
-process.env.AUTHORIZATION_URL && require('./config/passport-oauth2')(passport, 'oauth2');
+require("./config/passport-local")(passport, "local");
+process.env.AUTHORIZATION_URL &&
+  require("./config/passport-oauth2")(passport, "oauth2");
 
-//Use flash messages for errors, info, etc...
 app.use(flash());
 
 //middleware routes
@@ -62,46 +61,54 @@ const middleware = require("./src/middleware/middleware");
 //app.use(middleware.logger);
 
 //microservice routes
-const userMgmtRoutes = require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
+const userMgmtRoutes =
+  require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
 app.use("/usermgmt", userMgmtRoutes);
 
-const searchRoutes = require("./src/microServices/WaWSearch/searchRoutes/searchRoutes")(passport);
+const searchRoutes =
+  require("./src/microServices/WaWSearch/searchRoutes/searchRoutes")(passport);
 app.use("/search", searchRoutes);
 
-const mediaRoutes = require("./src/microServices/MediaService/mediaRoutes/mediaRoutes")(passport);
+const mediaRoutes =
+  require("./src/microServices/MediaService/mediaRoutes/mediaRoutes")(passport);
 app.use("/media", mediaRoutes);
 
-const reviewRatingsRoutes = require("./src/microServices/ReviewRatingsService/reviewRatingsRoutes/reviewRatingsRoutes")(passport);
+const reviewRatingsRoutes =
+  require("./src/microServices/ReviewRatingsService/reviewRatingsRoutes/reviewRatingsRoutes")(
+    passport
+  );
 app.use("/reviews", reviewRatingsRoutes);
 
-
-app.get("/loginOauth", passport.authenticate("oauth2", {
-  session: true,
-  successReturnToOrRedirect: "/"
-}))
-
-
-// Google Auth consent screen route
-app.get('/google',
-    passport.authenticate('google', {
-            scope:
-                ['email', 'profile']
-        }
-));
-
-// Call back route
-app.get('/google/callback',
-    passport.authenticate('google', {
-        failureRedirect: '/failed',
-    }),
-    function (req, res) {
-        res.redirect('/success')
-
-    }
+app.get(
+  "/loginOauth",
+  passport.authenticate("oauth2", {
+    session: true,
+    successReturnToOrRedirect: "/",
+  })
 );
 
+// Google Auth consent screen route
+app.get(
+  "/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
 
-// And... start it up!
+// Call back route
+app.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/failed",
+  }),
+  function (req, res) {
+    req.session.regenerate(function (err) {
+      // will have a new session here to prevent session fixation atk
+      res.redirect("/success");
+    });
+  }
+);
+
 module.exports = app.listen(props.port, () => {
   console.log(`Running in a ${props.env} environment`);
   console.log(`Server is running in port ${props.port}.`);

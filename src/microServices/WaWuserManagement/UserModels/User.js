@@ -25,8 +25,8 @@ const UserSchema = new mongoose.Schema({
     type: String, 
     required: false // can we make true with oauth?
   },
-  googleId: String,        // Unique identifier for Google OAuth2 users
-  googleDisplayName: String, // Display name for Google users
+  googleId: String,
+  googleDisplayName: String,
 });
 
-module.exports = mongoose.model('User', UserSchema, 'users'); // (ModelName, SchemaName, MongoDB collection name)
+module.exports = mongoose.model('User', UserSchema, 'users');

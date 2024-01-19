@@ -2,10 +2,8 @@ const mongoose = require("mongoose");
 const Rating = require("../reviewRatingsModels/reviewRatingsModels");
 const Media = require("../../MediaService/mediaModels/mediaModels");
 
-// Reviews Controller for fetching and posting to database
 module.exports = {
   postRating: async (req, res) => {
-    //grab the media, the user, and the rating
     try {
       const dbCallBody = {
         rating: req.params.rating,
@@ -16,43 +14,50 @@ module.exports = {
         mediaId: dbCallBody.mediaId,
         userId: dbCallBody.userId,
       });
-      // CHECK IF ONE DOCUMENT EXISTS
       if (existingRating) {
-        if (res) res.status(400).json({ success: false, message: 'Review/rating already exists' });
-        return { success: false, message: 'Review/rating already exists' };
+        if (res)
+          res
+            .status(400)
+            .json({ success: false, message: "Review/rating already exists" });
+        return { success: false, message: "Review/rating already exists" };
       }
-      // MAKE A NEW RATING IF NO RATING OR REVIEW EXISTS
+      // CREATES A NEW RATING IF NO RATING OR REVIEW EXISTS
       else {
         await Rating.create({
-            _id: new mongoose.Types.ObjectId(),
-            userId: dbCallBody.userId,
-            mediaId: dbCallBody.mediaId,
-            rating: dbCallBody.rating,
+          _id: new mongoose.Types.ObjectId(),
+          userId: dbCallBody.userId,
+          mediaId: dbCallBody.mediaId,
+          rating: dbCallBody.rating,
         });
 
         if (!(await Media.findOne({ imdbId: req.params.mediaId }))) {
           await Media.create({
-              imdbId: req.params.mediaId,
-              totalRatings: 0,
-              numberOfRatings: 0
+            imdbId: req.params.mediaId,
+            totalRatings: 0,
+            numberOfRatings: 0,
           });
         }
 
-        await Media.updateOne({ imdbId: req.params.mediaId }, {
+        await Media.updateOne(
+          { imdbId: req.params.mediaId },
+          {
             $inc: {
-                totalRatings: dbCallBody.rating,
-                numberOfRatings: 1
-            }
-        });
+              totalRatings: dbCallBody.rating,
+              numberOfRatings: 1,
+            },
+          }
+        );
 
-
-        if (res) res.status(201).json({ success: true, message: "User rating added" });
+        if (res)
+          res.status(201).json({ success: true, message: "User rating added" });
         return { success: true, message: "User rating added" };
       }
-    }
-    catch(err) {
-        if (res) res.status(400).json({ success: false, message: "Unable to add user rating" });
-        return { success: false, message: "Unable to add user rating" };
+    } catch (err) {
+      if (res)
+        res
+          .status(400)
+          .json({ success: false, message: "Unable to add user rating" });
+      return { success: false, message: "Unable to add user rating" };
     }
   },
 
@@ -67,12 +72,14 @@ module.exports = {
         mediaId: dbCallBody.mediaId,
         userId: dbCallBody.userId,
       });
-      // CHECK IF ONE DOCUMENT EXISTS
       if (existingReview) {
-        if (res) res.status(400).json({ success: false, message: 'Review/rating already exists' });
-        return { success: false, message: 'Review/rating already exists' };
+        if (res)
+          res
+            .status(400)
+            .json({ success: false, message: "Review/rating already exists" });
+        return { success: false, message: "Review/rating already exists" };
       }
-      // MAKE A NEW RATING IF NO RATING OR REVIEW EXISTS
+      // CREATES A NEW RATING IF NO RATING OR REVIEW EXISTS
       await Rating.create({
         _id: new mongoose.Types.ObjectId(),
         userId: dbCallBody.userId,
@@ -80,225 +87,252 @@ module.exports = {
         review: dbCallBody.review,
       });
 
-      if (res) res.status(201).json({ success: true, message: "User review added" });
+      if (res)
+        res.status(201).json({ success: true, message: "User review added" });
       return { success: true, message: "User review added" };
-    }
-    catch (err) {
-        if (res) res.status(400).json({ success: false, message: "Unable to add user review" });
-        return { success: false, message: "Unable to add user review" };
+    } catch (err) {
+      if (res)
+        res
+          .status(400)
+          .json({ success: false, message: "Unable to add user review" });
+      return { success: false, message: "Unable to add user review" };
     }
   },
 
-    /*
-    Updates a review and/or rating for a media by the logged in user
-    example body:
-        rating: 3
-        review: "new review"
-    */
-    putReviewRating: async (req, res) => {
-        try {
-            const dbCallBody = {
-                mediaId: req.params.mediaId,
-                userId: req.user._id
-            };
+  putReviewRating: async (req, res) => {
+    try {
+      const dbCallBody = {
+        mediaId: req.params.mediaId,
+        userId: req.user._id,
+      };
 
-            const dbUpdate = {
-                rating: req.body.rating || undefined,
-                review: req.body.review || undefined,
-                timestamp: Date.now(),
-            };
+      const dbUpdate = {
+        rating: req.body.rating || undefined,
+        review: req.body.review || undefined,
+        timestamp: Date.now(),
+      };
 
-            let oldReviewRating = await Rating.findOne(dbCallBody);
-            let result = await Rating.updateOne(dbCallBody, dbUpdate, { runValidators: true });
+      let oldReviewRating = await Rating.findOne(dbCallBody);
+      let result = await Rating.updateOne(dbCallBody, dbUpdate, {
+        runValidators: true,
+      });
 
-            if (result.matchedCount === 0) {
-                if (res) res.status(404).json({ success: false, message: 'Review/rating not found' });
-                return { success: false, message: 'Review/rating not found' };
-            }
+      if (result.matchedCount === 0) {
+        if (res)
+          res
+            .status(404)
+            .json({ success: false, message: "Review/rating not found" });
+        return { success: false, message: "Review/rating not found" };
+      }
 
-            if (!(await Media.findOne({ imdbId: req.params.mediaId }))) {
-                await Media.create({
-                    imdbId: req.params.mediaId,
-                    totalRatings: 0,
-                    numberOfRatings: 0
-                });
-            }
+      if (!(await Media.findOne({ imdbId: req.params.mediaId }))) {
+        await Media.create({
+          imdbId: req.params.mediaId,
+          totalRatings: 0,
+          numberOfRatings: 0,
+        });
+      }
 
-            if (oldReviewRating.rating) {
-                await Media.updateOne({ imdbId: req.params.mediaId }, {
-                    $inc: {
-                        totalRatings: -oldReviewRating.rating,
-                        numberOfRatings: -1
-                    }
-                });
-            }
-            if (dbUpdate.rating) {
-                await Media.updateOne({ imdbId: req.params.mediaId }, {
-                    $inc: {
-                        totalRatings: dbUpdate.rating,
-                        numberOfRatings: 1
-                    }
-                });
-            }
+      if (oldReviewRating.rating) {
+        await Media.updateOne(
+          { imdbId: req.params.mediaId },
+          {
+            $inc: {
+              totalRatings: -oldReviewRating.rating,
+              numberOfRatings: -1,
+            },
+          }
+        );
+      }
+      if (dbUpdate.rating) {
+        await Media.updateOne(
+          { imdbId: req.params.mediaId },
+          {
+            $inc: {
+              totalRatings: dbUpdate.rating,
+              numberOfRatings: 1,
+            },
+          }
+        );
+      }
 
-            if (res) res.status(201).json({ success: true, message: "Updated rating/review" });
-            return { success: true, message: "Updated rating/review" };
-        }
-        catch(err) {
-            console.error(err);
-            if (res) res.status(500).json({ success: false, message: "Failed to update rating/review" });
-            return { success: false, message: "Failed to update rating/review" };
-        }
-    },
+      if (res)
+        res
+          .status(201)
+          .json({ success: true, message: "Updated rating/review" });
+      return { success: true, message: "Updated rating/review" };
+    } catch (err) {
+      console.error(err);
+      if (res)
+        res
+          .status(500)
+          .json({ success: false, message: "Failed to update rating/review" });
+      return { success: false, message: "Failed to update rating/review" };
+    }
+  },
 
-    /*
-    Gets the review and rating for a media by the logged in user
-    */
-    getReviewRating: async (req, res) => {
-        try {
-            const dbCallBody = {
-                mediaId: req.params.mediaId,
-                userId: req.user._id
-            };
+  getReviewRating: async (req, res) => {
+    try {
+      const dbCallBody = {
+        mediaId: req.params.mediaId,
+        userId: req.user._id,
+      };
 
-            let reviewRating = await Rating.findOne(dbCallBody);
-            if (!reviewRating) {
-                if (res) res.status(404).json({ success: false, message: "No existing rating or review from this user for this media" });
-                return { success: false, message: "No existing rating or review from this user for this media" };
-            }
+      let reviewRating = await Rating.findOne(dbCallBody);
+      if (!reviewRating) {
+        if (res)
+          res.status(404).json({
+            success: false,
+            message:
+              "No existing rating or review from this user for this media",
+          });
+        return {
+          success: false,
+          message: "No existing rating or review from this user for this media",
+        };
+      }
 
-            if (res) res.json(reviewRating);
-            return reviewRating;
-        }
-        catch(err) {
-            console.error(err);
-            if (res) res.status(500).json({ success: false, message: "Failed to get rating/review" });
-            return { success: false, message: "Failed to get rating/review" };
-        }
-    },
+      if (res) res.json(reviewRating);
+      return reviewRating;
+    } catch (err) {
+      console.error(err);
+      if (res)
+        res
+          .status(500)
+          .json({ success: false, message: "Failed to get rating/review" });
+      return { success: false, message: "Failed to get rating/review" };
+    }
+  },
 
-    /*
-    Deletes either the review or rating and review for a media by the logged in user
-    example body:
-        delete: "review"
-    */
-    deleteReviewRating: async (req, res) => {
-        let deleteType = req.body.delete || "";
+  deleteReviewRating: async (req, res) => {
+    let deleteType = req.body.delete || "";
 
-        try {
-            deleteType = deleteType.toLowerCase();
-            if (deleteType !== "review") {
-                deleteType = "both"
-            };
+    try {
+      deleteType = deleteType.toLowerCase();
+      if (deleteType !== "review") {
+        deleteType = "both";
+      }
 
-            const dbCallBody = {
-                mediaId: req.params.mediaId,
-                userId: req.user._id
-            };
-            const dbUpdateBody = {
-                review: null,
-                rating: (deleteType !== "review") ? null : undefined,
-                timestamp: Date.now()
-            };
+      const dbCallBody = {
+        mediaId: req.params.mediaId,
+        userId: req.user._id,
+      };
+      const dbUpdateBody = {
+        review: null,
+        rating: deleteType !== "review" ? null : undefined,
+        timestamp: Date.now(),
+      };
 
-            let review = await Rating.findOne(dbCallBody);
+      let review = await Rating.findOne(dbCallBody);
 
-            let result = await Rating.updateOne(dbCallBody, dbUpdateBody);
-            if (result.matchedCount === 0) {
-                if (res) res.status(404).json({ success: false, message: 'Review/rating not found' });
-                return { success: false, message: 'Review/rating not found' };
-            }
+      let result = await Rating.updateOne(dbCallBody, dbUpdateBody);
+      if (result.matchedCount === 0) {
+        if (res)
+          res
+            .status(404)
+            .json({ success: false, message: "Review/rating not found" });
+        return { success: false, message: "Review/rating not found" };
+      }
 
-            if (deleteType !== "review") {
-                await Rating.deleteOne(dbCallBody);
-                await Media.updateOne({
-                    imdbId: req.params.mediaId
-                }, {
-                    $inc: {
-                        totalRatings: -review.rating,
-                        numberOfRatings: -1
-                    }
-                });
-            }
+      if (deleteType !== "review") {
+        await Rating.deleteOne(dbCallBody);
+        await Media.updateOne(
+          {
+            imdbId: req.params.mediaId,
+          },
+          {
+            $inc: {
+              totalRatings: -review.rating,
+              numberOfRatings: -1,
+            },
+          }
+        );
+      }
 
-            if (res) res.status(200).json({ success: true, message: "Deleted review/rating"});
-            return { success: true, message: "Deleted review/rating"};
+      if (res)
+        res
+          .status(200)
+          .json({ success: true, message: "Deleted review/rating" });
+      return { success: true, message: "Deleted review/rating" };
+    } catch (err) {
+      console.log(err);
+      console.error(err);
+      if (res)
+        res
+          .status(500)
+          .json({ success: false, message: "Failed to delete review/rating" });
+      return { success: false, message: "Failed to delete review/rating" };
+    }
+  },
 
-        }
-        catch(err) {
-            console.log(err);
-            console.error(err);
-            if (res) res.status(500).json({ success: false, message: "Failed to delete review/rating" });
-            return { success: false, message: "Failed to delete review/rating" };
-        }
-    },
+  getReviews: async (req, res) => {
+    let mediaId = req.params.mediaId;
+    let page = req.params.page || 1;
+    let pageSize = req.query?.pageSize || 20;
+    try {
+      if (isNaN(page - 1)) throw new Error("Invalid page given");
 
-    /*
-    Gets a page of reviews for a media
-    example query parameters:
-        pageSize: 20
-    */
-    getReviews: async (req, res) => {
-        let mediaId = req.params.mediaId;
-        let page = req.params.page || 1;
-        let pageSize = (req.query || {}).pageSize || 20;
+      let results = await Rating.find({
+        mediaId,
+      })
+        .populate("userId")
+        .skip((page - 1) * pageSize)
+        .limit(pageSize);
 
-        try {
-            if (isNaN(page - 1)) throw "Invalid page given";
+      let count = await Rating.countDocuments({ mediaId });
+      results = results.map((x) => {
+        return {
+          _id: x._id,
+          userId: x.userId._id || x.userId,
+          userName: x.userId.userName,
+          mediaId: x.mediaId,
+          rating: x.rating,
+          review: x.review,
+          timestamp: x.timestamp,
+        };
+      });
 
-            let results = await Rating.find({
-                mediaId
-            })
-            .populate("userId").skip((page - 1) * pageSize).limit(pageSize);
+      if (res) res.json({ success: true, results, count });
+      return { success: true, results, count };
+    } catch (err) {
+      console.error(err);
+      if (res)
+        res
+          .status(500)
+          .json({ success: false, message: "Failed to find reviews" });
+      return { success: false, message: "Failed to find reviews" };
+    }
+  },
 
-            let count = await Rating.countDocuments({ mediaId });
-            results = results.map(x => {
-                return {
-                    _id: x._id,
-                    userId: x.userId._id || x.userId,
-                    userName: x.userId.userName,
-                    mediaId: x.mediaId,
-                    rating: x.rating,
-                    review: x.review,
-                    timestamp: x.timestamp
-                }
-            });
+  getAverageRating: async (req, res) => {
+    let mediaId = req.params.mediaId;
 
-            if (res) res.json({ success: true, results, count });
-            return { success: true, results, count };
-        }
-        catch(err) {
-            console.error(err);
-            if (res) res.status(500).json({ success: false, message: "Failed to find reviews"});
-            return { success: false, message: "Failed to find reviews"};
-        }
-    },
+    try {
+      let result = await Media.findOne({ imdbId: mediaId });
 
-    /*
-    Gets the average rating and number of ratings for a given media
-    */
-    getAverageRating: async (req, res) => {
-        let mediaId = req.params.mediaId;
-        
-        try {
-            let result = await Media.findOne({ imdbId: mediaId });
+      if (!result) {
+        if (res)
+          res.status(404).json({
+            success: false,
+            message: "No media found with the given id",
+          });
+        return { success: false, message: "No media found with the given id" };
+      }
 
-            if (!result) {
-                if (res) res.status(404).json({ success: false, message: "No media found with the given id" });
-                return { success: false, message: "No media found with the given id" };
-            }
-
-            let averageRating = result.totalRatings / result.numberOfRatings;
-            if (res) res.json({ averageRating, numberOfRatings: result.numberOfRatings });
-            return { averageRating, numberOfRatings: result.numberOfRatings };
-        }
-        catch(err) {
-            console.error(err);
-            if (res) res.status(500).json({ success: false, message: "Failed to get average rating" });
-            return { success: false, message: "Failed to get average rating" };
-        }
-    },
-}
+      let averageRating = result.totalRatings / result.numberOfRatings;
+      if (res)
+        res.json({ averageRating, numberOfRatings: result.numberOfRatings });
+      return { averageRating, numberOfRatings: result.numberOfRatings };
+    } catch (err) {
+      console.error(err);
+      if (res)
+        res
+          .status(500)
+          .json({ success: false, message: "Failed to get average rating" });
+      return { success: false, message: "Failed to get average rating" };
+    }
+  },
+};
 
 // TODO: if user opens a media property to rate or review, create document(s) for that.
 
