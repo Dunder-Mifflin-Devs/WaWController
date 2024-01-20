@@ -52,7 +52,7 @@ describe("test database connection", () => {
 
       throw new Error("Example error");
     } catch (err) {
-      expect(err.message).toBe("Media validation failed");
+      expect(err.message).toBe("Media validation failed: imdbId: Path `imdbId` is required.");
     }
   });
 
@@ -96,7 +96,7 @@ describe("test database connection", () => {
 
       throw new Error("Example error");
     } catch (err) {
-      expect(err.message).toBe("ReviewRating validation failed");
+      expect(err.message).toBe("ReviewRating validation failed: rating: Path `rating` (6) is more than maximum allowed value (5).");
     }
   });
 });
