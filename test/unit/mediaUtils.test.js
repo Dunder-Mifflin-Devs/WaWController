@@ -1,17 +1,19 @@
-const { wordList, getRandomWord } = require("../../src/microServices/MediaService/utils/randomWords");
+const {
+  wordList,
+  getRandomWord,
+} = require("../../src/microServices/MediaService/utils/randomWords");
 
-// test suite for media utils unit tests
 describe("Media Utils Tests", () => {
-    beforeEach(() => {
-        jest.spyOn(console, 'error')
-        console.error.mockImplementation(() => null);
-    });
-      
-      afterEach(() => {
-        console.error.mockRestore()
-    })
+  beforeEach(() => {
+    jest.spyOn(console, "error");
+    console.error.mockImplementation(() => null);
+  });
 
-    test("if getRandomWord returns a word in the wordList", () => {
-        expect(wordList).toContain(getRandomWord());
-    })
-})
+  afterEach(() => {
+    console.error.mockRestore();
+  });
+
+  test("if getRandomWord returns a word in the wordList", () => {
+    expect(wordList).toContain(getRandomWord());
+  });
+});

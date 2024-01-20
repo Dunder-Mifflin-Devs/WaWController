@@ -1,371 +1,414 @@
 const data = require("./reviewsController.data");
 const {
-    postRating,
-    postReview,
-    putReviewRating,
-    getReviewRating,
-    getReviews,
-    getAverageRating,
-    deleteReviewRating
+  postRating,
+  postReview,
+  putReviewRating,
+  getReviewRating,
+  getReviews,
+  getAverageRating,
+  deleteReviewRating,
 } = require("../../src/microServices/ReviewRatingsService/reviewRatingsControllers/reviewsController");
 const Rating = require("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels");
 const Media = require("../../src/microServices/MediaService/mediaModels/mediaModels");
 
-//sets up the functions to mock
-jest.mock("../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels", () => {
+jest.mock(
+  "../../src/microServices/ReviewRatingsService/reviewRatingsModels/reviewRatingsModels",
+  () => {
     return {
-        find: jest.fn(),
-        findOne: jest.fn(),
-        updateOne: jest.fn(),
-        countDocuments: jest.fn(),
-        deleteOne: jest.fn(),
-        create: jest.fn()
-    }
-});
-jest.mock("../../src/microServices/MediaService/mediaModels/mediaModels", () => {
+      find: jest.fn(),
+      findOne: jest.fn(),
+      updateOne: jest.fn(),
+      countDocuments: jest.fn(),
+      deleteOne: jest.fn(),
+      create: jest.fn(),
+    };
+  }
+);
+jest.mock(
+  "../../src/microServices/MediaService/mediaModels/mediaModels",
+  () => {
     return {
-        findOne: jest.fn(),
-        updateOne: jest.fn(),
-        create: jest.fn()
-    }
-});
+      findOne: jest.fn(),
+      updateOne: jest.fn(),
+      create: jest.fn(),
+    };
+  }
+);
 
-// test suite for review/rating controller unit tests
 describe("Review/Rating Controller Tests", () => {
-    beforeEach(() => {
-        jest.spyOn(console, 'error')
-        console.error.mockImplementation(() => null);
-    });
-      
-    afterEach(() => {
-        console.error.mockRestore()
-    });
+  beforeEach(() => {
+    jest.spyOn(console, "error");
+    console.error.mockImplementation(() => null);
+  });
 
-    test("results of a valid postRating request are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Media.updateOne.mockImplementation((dbCallBody) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+  afterEach(() => {
+    console.error.mockRestore();
+  });
 
-        expect(await postRating(data.examplePostRatingRequest))
-            .toEqual({ success: true, message: "User rating added" });
+  test("results of a valid postRating request are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Media.updateOne.mockImplementation((dbCallBody) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a postRating request when rating/review exists are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return data.exampleRating
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Media.updateOne.mockImplementation((dbCallBody) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await postRating(data.examplePostRatingRequest)).toEqual({
+      success: true,
+      message: "User rating added",
+    });
+  });
 
-        expect(await postRating(data.examplePostRatingRequest))
-            .toEqual({ success: false, message: 'Review/rating already exists' });
+  test("results of a postRating request when rating/review exists are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return data.exampleRating;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Media.updateOne.mockImplementation((dbCallBody) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a postRating request that causes an error are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Media.updateOne.mockImplementation((dbCallBody) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await postRating(data.examplePostRatingRequest)).toEqual({
+      success: false,
+      message: "Review/rating already exists",
+    });
+  });
 
-        expect(await postRating(data.examplePostRatingRequest))
-            .toEqual({ success: false, message: "Unable to add user rating" });
+  test("results of a postRating request that causes an error are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
+    });
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Media.updateOne.mockImplementation((dbCallBody) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a valid postReview request are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await postRating(data.examplePostRatingRequest)).toEqual({
+      success: false,
+      message: "Unable to add user rating",
+    });
+  });
 
-        expect(await postReview(data.examplePostReviewRequest))
-            .toEqual({ success: true, message: "User review added" });
+  test("results of a valid postReview request are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a postReview request when rating/review exists are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return data.exampleRating
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await postReview(data.examplePostReviewRequest)).toEqual({
+      success: true,
+      message: "User review added",
+    });
+  });
 
-        expect(await postReview(data.examplePostReviewRequest))
-            .toEqual({ success: false, message: 'Review/rating already exists' });
+  test("results of a postReview request when rating/review exists are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return data.exampleRating;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a postReview request that causes an error are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
-        Rating.create.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
+    expect(await postReview(data.examplePostReviewRequest)).toEqual({
+      success: false,
+      message: "Review/rating already exists",
+    });
+  });
 
-        expect(await postReview(data.examplePostReviewRequest))
-            .toEqual({ success: false, message: "Unable to add user review" });
+  test("results of a postReview request that causes an error are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return null;
+    });
+    Rating.create.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
     });
 
-    test("results of a valid putReviewRating request are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return data.exampleRating
-        });
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.create.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await postReview(data.examplePostReviewRequest)).toEqual({
+      success: false,
+      message: "Unable to add user review",
+    });
+  });
 
-        expect(await putReviewRating(data.examplePutRatingRequest))
-            .toEqual({ success: true, message: "Updated rating/review" });
+  test("results of a valid putReviewRating request are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return data.exampleRating;
+    });
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.create.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a putReviewRrating request without an existing reviewRating are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return null
-        });
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return {
-                matchedCount: 0
-            }
-        });
-        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
-            return {
-                matchedCount: 0
-            }
-        });
-        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
+    expect(await putReviewRating(data.examplePutRatingRequest)).toEqual({
+      success: true,
+      message: "Updated rating/review",
+    });
+  });
 
-        expect(await putReviewRating(data.examplePutRatingRequest))
-            .toEqual({ success: false, message: 'Review/rating not found' });
+  test("results of a putReviewRrating request without an existing reviewRating are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return null;
+    });
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return {
+        matchedCount: 0,
+      };
+    });
+    Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+      return {
+        matchedCount: 0,
+      };
+    });
+    Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
     });
 
-    test("results of an invalid putReviewRating request are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return data.exampleRating
-        });
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            throw "Example Error";
-        });
-        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
+    expect(await putReviewRating(data.examplePutRatingRequest)).toEqual({
+      success: false,
+      message: "Review/rating not found",
+    });
+  });
 
-        expect(await putReviewRating(data.examplePutRatingRequest))
-            .toEqual({ success: false, message: "Failed to update rating/review" });
+  test("results of an invalid putReviewRating request are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return data.exampleRating;
+    });
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      throw new Error("Example Error");
+    });
+    Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.updateOne.mockImplementation((dbCallbody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
     });
 
-    test("results of deleting a rating successfully are formatted correctly", async () => {
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Rating.findOne.mockImplementation((dbCallbody) => {
-            return data.exampleRating
-        });
-        Rating.deleteOne.mockImplementation((dbCallBody) => {
-            return {
-                matchedCount: 1
-            }
-        });
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return {
-                matchedCount: 1
-            }
-        });
+    expect(await putReviewRating(data.examplePutRatingRequest)).toEqual({
+      success: false,
+      message: "Failed to update rating/review",
+    });
+  });
 
-        expect(await deleteReviewRating(data.exampleDeleteRatingRequest))
-            .toEqual({ success: true, message: "Deleted review/rating"});
+  test("results of deleting a rating successfully are formatted correctly", async () => {
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Rating.findOne.mockImplementation((dbCallbody) => {
+      return data.exampleRating;
+    });
+    Rating.deleteOne.mockImplementation((dbCallBody) => {
+      return {
+        matchedCount: 1,
+      };
+    });
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return {
+        matchedCount: 1,
+      };
     });
 
-    test("results of deleting a non-existant rating are formatted correctly", async () => {
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            return {
-                matchedCount: 0
-            }
-        });
-        Rating.findOne.mockImplementation((dbCallbody) => {
-            return data.exampleRating
-        });
+    expect(await deleteReviewRating(data.exampleDeleteRatingRequest)).toEqual({
+      success: true,
+      message: "Deleted review/rating",
+    });
+  });
 
-        expect(await deleteReviewRating(data.exampleDeleteRatingRequest))
-            .toEqual({ success: false, message: "Review/rating not found" });
+  test("results of deleting a non-existant rating are formatted correctly", async () => {
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      return {
+        matchedCount: 0,
+      };
+    });
+    Rating.findOne.mockImplementation((dbCallbody) => {
+      return data.exampleRating;
     });
 
-    test("results of a deleteReviewRating request error are formatted correctly", async () => {
-        Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
-            throw "Example error"
-        });
-        Rating.findOne.mockImplementation((dbCallbody) => {
-            return data.exampleRating
-        });
+    expect(await deleteReviewRating(data.exampleDeleteRatingRequest)).toEqual({
+      success: false,
+      message: "Review/rating not found",
+    });
+  });
 
-        expect(await deleteReviewRating(data.exampleDeleteRatingRequest))
-            .toEqual({ success: false, message: "Failed to delete review/rating" });
+  test("results of a deleteReviewRating request error are formatted correctly", async () => {
+    Rating.updateOne.mockImplementation((dbCallBody, dbUpdate) => {
+      throw new Error("Example error");
+    });
+    Rating.findOne.mockImplementation((dbCallbody) => {
+      return data.exampleRating;
     });
 
-    test("results of a successful getReviewRating request are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return data.exampleRating
-        });
+    expect(await deleteReviewRating(data.exampleDeleteRatingRequest)).toEqual({
+      success: false,
+      message: "Failed to delete review/rating",
+    });
+  });
 
-        expect(await getReviewRating(data.exampleGetRatingRequest))
-            .toEqual(data.exampleRating);
+  test("results of a successful getReviewRating request are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return data.exampleRating;
     });
 
-    test("results of a getReviewRating request without a review/rating are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await getReviewRating(data.exampleGetRatingRequest)).toEqual(
+      data.exampleRating
+    );
+  });
 
-        expect(await getReviewRating(data.exampleGetRatingRequest))
-            .toEqual({ success: false, message: "No existing rating or review from this user for this media" });
+  test("results of a getReviewRating request without a review/rating are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a failure occurring when calling getReviewRating are formatted correctly", async () => {
-        Rating.findOne.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
+    expect(await getReviewRating(data.exampleGetRatingRequest)).toEqual({
+      success: false,
+      message: "No existing rating or review from this user for this media",
+    });
+  });
 
-        expect(await getReviewRating(data.exampleGetRatingRequest))
-            .toEqual({ success: false, message: "Failed to get rating/review" });
+  test("results of a failure occurring when calling getReviewRating are formatted correctly", async () => {
+    Rating.findOne.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
     });
 
-    test("results of a successful getAverageRating request are formatted correctly", async () => {
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return data.exampleMediaInfo
-        });
+    expect(await getReviewRating(data.exampleGetRatingRequest)).toEqual({
+      success: false,
+      message: "Failed to get rating/review",
+    });
+  });
 
-        expect(await getAverageRating(data.exampleGetAverageRatingRequest))
-            .toEqual({ averageRating: data.exampleAverageRating, numberOfRatings: data.exampleMediaInfo.numberOfRatings });
+  test("results of a successful getAverageRating request are formatted correctly", async () => {
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return data.exampleMediaInfo;
     });
 
-    test("results of a getAverageRating request with an invalid mediaId are formatted correctly", async () => {
-        Media.findOne.mockImplementation((dbCallBody) => {
-            return null
-        });
+    expect(await getAverageRating(data.exampleGetAverageRatingRequest)).toEqual(
+      {
+        averageRating: data.exampleAverageRating,
+        numberOfRatings: data.exampleMediaInfo.numberOfRatings,
+      }
+    );
+  });
 
-        expect(await getAverageRating(data.exampleGetAverageRatingRequest))
-            .toEqual({ success: false, message: "No media found with the given id" });
+  test("results of a getAverageRating request with an invalid mediaId are formatted correctly", async () => {
+    Media.findOne.mockImplementation((dbCallBody) => {
+      return null;
     });
 
-    test("results of a getAverageRating request that caused on error are formatted correctly", async () => {
-        Media.findOne.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
+    expect(await getAverageRating(data.exampleGetAverageRatingRequest)).toEqual(
+      { success: false, message: "No media found with the given id" }
+    );
+  });
 
-        expect(await getAverageRating(data.exampleGetAverageRatingRequest))
-            .toEqual({ success: false, message: "Failed to get average rating" });
+  test("results of a getAverageRating request that caused on error are formatted correctly", async () => {
+    Media.findOne.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
     });
 
-    test("results of a successful getReviews request are formatted correctly", async () => {
-        Rating.find.mockImplementation((dbCallBody) => {
-            return {
-                populate: () => {
-                    return {
-                        skip: () => {
-                            return { limit: () => data.exampleReviews }
-                        }
-                    }
-                }
-            }
-        });
-        Rating.countDocuments.mockImplementation((dbCallBody) => {
-            return data.exampleReviews.length
-        });
+    expect(await getAverageRating(data.exampleGetAverageRatingRequest)).toEqual(
+      { success: false, message: "Failed to get average rating" }
+    );
+  });
 
-        let result = await getReviews(data.exampleGetReviewsRequest);
-        expect(result)
-            .toMatchObject({ success: true, count: data.exampleReviews.length });
-        
-        expect(result.results.length)
-            .toBe(data.exampleReviews.length);
-
-        expect(result.results)
-            .toMatchObject(data.exampleReviews);
+  test("results of a successful getReviews request are formatted correctly", async () => {
+    Rating.find.mockImplementation((dbCallBody) => {
+      return {
+        populate: () => {
+          return {
+            skip: () => {
+              return { limit: () => data.exampleReviews };
+            },
+          };
+        },
+      };
+    });
+    Rating.countDocuments.mockImplementation((dbCallBody) => {
+      return data.exampleReviews.length;
     });
 
-    test("resuts of a getReviews request that caused an error in find are formatted correctly", async () => {
-        Rating.find.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
-        Rating.countDocuments.mockImplementation((dbCallBody) => {
-            return 1
-        });
-
-        expect(await getReviews(data.exampleGetReviewsRequest))
-            .toEqual({ success: false, message: "Failed to find reviews" });
+    let result = await getReviews(data.exampleGetReviewsRequest);
+    expect(result).toMatchObject({
+      success: true,
+      count: data.exampleReviews.length,
     });
 
-    test("resuts of a getReviews request that caused an error in countDocuments are formatted correctly", async () => {
-        Rating.find.mockImplementation((dbCallBody) => {
-            return data.exampleReviews
-        });
-        Rating.countDocuments.mockImplementation((dbCallBody) => {
-            throw "Example error"
-        });
+    expect(result.results.length).toBe(data.exampleReviews.length);
 
-        expect(await getReviews(data.exampleGetReviewsRequest))
-            .toEqual({ success: false, message: "Failed to find reviews" });
+    expect(result.results).toMatchObject(data.exampleReviews);
+  });
+
+  test("resuts of a getReviews request that caused an error in find are formatted correctly", async () => {
+    Rating.find.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
     });
+    Rating.countDocuments.mockImplementation((dbCallBody) => {
+      return 1;
+    });
+
+    expect(await getReviews(data.exampleGetReviewsRequest)).toEqual({
+      success: false,
+      message: "Failed to find reviews",
+    });
+  });
+
+  test("resuts of a getReviews request that caused an error in countDocuments are formatted correctly", async () => {
+    Rating.find.mockImplementation((dbCallBody) => {
+      return data.exampleReviews;
+    });
+    Rating.countDocuments.mockImplementation((dbCallBody) => {
+      throw new Error("Example error");
+    });
+
+    expect(await getReviews(data.exampleGetReviewsRequest)).toEqual({
+      success: false,
+      message: "Failed to find reviews",
+    });
+  });
 });

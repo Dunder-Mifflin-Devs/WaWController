@@ -3,17 +3,17 @@ const User = require("../src/microServices/WaWuserManagement/UserModels/User");
 const bcrypt = require("bcrypt");
 
 module.exports = function (passport, label) {
-  passport.use(label,
+  passport.use(
+    label,
     new LocalStrategy({ usernameField: "email" }, (email, password, done) => {
       User.findOne({ userEmail: email.toLowerCase() })
-        .then(user => {
+        .then((user) => {
           if (!user) {
             return done(null, false, { msg: `Email ${email} not found.` });
           }
           if (!user.passHash) {
             return done(null, false, {
-              msg:
-                "Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile.",
+              msg: "Your account was registered using a sign-in provider. To enable password login, sign in using a provider, and then set a password under your user profile.",
             });
           }
 
@@ -27,10 +27,10 @@ module.exports = function (passport, label) {
             return done(null, false, { msg: "Invalid email or password." });
           });
         })
-        .catch(err => {
+        .catch((err) => {
           return done(err);
         });
-      })
+    })
   );
 
   passport.serializeUser((user, done) => {

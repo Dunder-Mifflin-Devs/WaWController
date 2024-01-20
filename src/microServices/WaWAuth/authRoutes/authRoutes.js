@@ -1,17 +1,14 @@
-
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../authControllers/authController');
+const authController = require("../authControllers/authController");
 
 router.get("/signup", authController.getSignup);
 router.post("/signup", authController.postSignup);
-router.post('/', authController.auth);
-router.post
+router.post("/", authController.auth);
+
+router.post("/logout", authController.logout);
 
 module.exports = router;
-
-//from here you will call the controller for the service
-
 
 /*
 const express = require("express");
@@ -27,9 +24,8 @@ router.get("/profile", ensureAuth, postsController.getProfile);
 router.get("/feed", ensureAuth, postsController.getFeed);
 router.get("/login", authController.getLogin);
 router.post("/login", authController.postLogin);
-router.get("/logout", authController.logout);
+
 
 
 module.exports = router;
 */
-
