@@ -9,6 +9,7 @@ const methodOverride = require("method-override");
 const flash = require("express-flash");
 const logger = require("morgan");
 const { connectDB, run } = require("./config/database");
+const cors = require("cors");
 require("dotenv").config({ path: "./config/.env" });
 
 //Create Database
@@ -59,6 +60,21 @@ app.use(flash());
 //middleware routes
 const middleware = require("./src/middleware/middleware");
 //app.use(middleware.logger);
+
+//cors enabled and described
+const allowedOrigins = ['http://omdb.com', 'https://dmd-waw-dev.onrender.com/'];
+
+// Configure CORS with allowed origins
+app.use(cors({
+  origin: function (origin, callback) {
+    // Check if the origin is allowed or if it is undefined (for non-browser requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 //microservice routes
 const userMgmtRoutes =
