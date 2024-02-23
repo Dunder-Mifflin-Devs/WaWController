@@ -62,21 +62,21 @@ const middleware = require("./src/middleware/middleware");
 //app.use(middleware.logger);
 
 //cors enabled and described
-const allowedOrigins = ['http://omdb.com', 'https://dmd-waw-dev.onrender.com/'];
-// const allowedOrigins = ['*'];
+// const allowedOrigins = ['http://omdb.com', 'https://dmd-waw-dev.onrender.com/'];
 
 // Configure CORS with allowed origins
-app.use(cors({
-  origin: function (origin, callback) {
-    // Check if the origin is allowed or if it is undefined (for non-browser requests)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
-// app.use(cors());
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     // Check if the origin is allowed or if it is undefined (for non-browser requests)
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// }));
+
+app.use(cors());
 
 //microservice routes
 const userMgmtRoutes =
