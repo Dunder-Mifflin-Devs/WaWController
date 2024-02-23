@@ -79,6 +79,7 @@ const allowedOrigins = ['*'];
 
 app.use(cors());
 
+
 //microservice routes
 const userMgmtRoutes =
   require("./src/microServices/WaWuserManagement/userRoutes/index")(passport);
